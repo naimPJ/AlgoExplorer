@@ -1,38 +1,100 @@
+/* App.css */
 .App {
-  text-align: center;
+    display: flex;
+    flex-direction: column; /* Stack Navbar and main content vertically */
+    height: 100vh; /* Full height for the app */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.main-content {
+    display: flex;
+    flex-direction: row;
+    
+    
+    
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.sidebar {
+    width: 200px;
+    background-color: #f4f4f4;
+    padding: 20px;
+    height: 100%;
+    
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.sidebar button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    background-color: #CCE7FF;
+    color: black;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.sidebar button:hover {
+    background-color: #B3D9FF;
+}
+.content-container {
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  text-align: center;
+  color: #333;
+}
+
+
+
+.array-input {
+  width: 100%;
+  max-width: 300px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.visualization-canvas {
+  background-color: #f9f9f9;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-top: 20px;
+}
+
+.array-input-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.start-button {
+  padding: 10px 20px;
+  font-size: 16px;
   color: white;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
 }
 
-.App-link {
-  color: #61dafb;
+
+.start-button:hover {
+  background-color: #45A049;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.start-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }

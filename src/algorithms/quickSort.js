@@ -1,0 +1,77 @@
+export const quickSort = (array) => {
+    const steps = [];
+    const sortedArray = [...array];
+
+    const partition = (low, high) => {
+        const pivot = sortedArray[high];
+        steps.push({
+            indices: [high],
+            action: "pivot",
+            description: `Selected pivot element: ${pivot}`
+        });
+
+        let i = low - 1;
+
+        for (let j = low; j < high; j++) {
+            steps.push({
+                indices: [j, high],
+                action: "compare",
+                description: `Comparing element ${sortedArray[j]} with pivot ${pivot}`
+            });
+
+            if (sortedArray[j] <= pivot) {
+                i++;
+                if (i !== j) {
+                    [sortedArray[i], sortedArray[j]] = [sortedArray[j], sortedArray[i]];
+                    steps.push({
+                        indices: [i, j],
+                        action: "swap",
+                        description: `Swapping elements ${sortedArray[i]} and ${sortedArray[j]}`
+                    });
+                }
+            }
+        }
+
+        if (i + 1 !== high) {
+            [sortedArray[i + 1], sortedArray[high]] = [sortedArray[high], sortedArray[i + 1]];
+            steps.push({
+                indices: [i + 1, high],
+                action: "swap",
+                description: `Placing pivot in its final position`
+            });
+        }
+
+        return i + 1;
+    };
+
+    const quickSortHelper = (low, high) => {
+        if (low < high) {
+            const pi = partition(low, high);
+            steps.push({
+                indices: [pi],
+                action: "fixed",
+                description: `Element ${sortedArray[pi]} is in its final position`
+            });
+            quickSortHelper(low, pi - 1);
+            quickSortHelper(pi + 1, high);
+        }
+    };
+
+    quickSortHelper(0, sortedArray.length - 1);
+
+    return {
+        steps,
+        sortedArray
+    };
+};
+
+export const quickSortInfo = {
+    name: "Quick Sort",
+    timeComplexity: {
+        best: "O(n log n)",
+        average: "O(n log n)",
+        worst: "O(n²)"
+    },
+    spaceComplexity: "O(log n)",
+    description: "Quick Sort is an efficient, in-place sorting algorithm that uses a divide-and-conquer strategy. It works by selecting a 'pivot' element and partitioning the array around it."
+}; 

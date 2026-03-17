@@ -1,0 +1,73 @@
+/* components/Navbar.css */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #CCE7FF;
+    padding: 10px 20px;
+    color: white;
+    position: fixed; /* Fiksirana pozicija */
+    top: 0; /* Na vrhu stranice */
+    left: 0; /* Od lijevog ruba */
+    right: 0; /* Do desnog ruba */
+    z-index: 1000; /* Visok z-index da bude iznad ostalih elemenata */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sjena za odvajanje od sadržaja */
+    backdrop-filter: blur(10px); /* Blago zamućenje pozadine */
+    -webkit-backdrop-filter: blur(10px); /* Za Safari */
+    transition: all 0.3s ease; /* Glatka tranzicija za sve promjene */
+}
+
+/* Dodajemo hover efekat na navbar */
+.navbar:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-image {
+    height: 40px;
+    width: auto;
+    transition: transform 0.3s ease; /* Dodajemo tranziciju za hover efekat */
+}
+
+.logo-image:hover {
+    transform: scale(1.05); /* Malo povećanje na hover */
+}
+
+.nav-links {
+    display: flex;
+    gap: 15px; /* Povećan razmak između dugmadi */
+}
+
+.nav-button {
+    background-color: transparent;
+    border: 2px solid transparent;
+    color: #1976D2;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px 20px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.nav-button:hover {
+    background-color: rgba(25, 118, 210, 0.1);
+    border-color: #1976D2;
+    transform: translateY(-1px);
+}
+
+.nav-button:active {
+    transform: translateY(0);
+}
+
+/* Dodajemo margin-top na glavni sadržaj da kompenziramo fiksni navbar */
+main {
+    margin-top: 60px; /* Prilagodite ovu vrijednost prema visini vašeg navbara */
+    padding-top: 20px;
+}
