@@ -1,74 +1,111 @@
 export const mergeSort = (array) => {
     const steps = [];
-    const sortedArray = [...array];
+    const arr = [...array];
 
-    const merge = (left, right, startIdx) => {
+    // Live partition state: list of [start, end) pairs
+    let segments = [[0, arr.length]];
+
+    const snap = () => segments.map(s => [s[0], s[1]]).sort((a, b) => a[0] - b[0]);
+
+    const splitSegment = (start, mid, end) => {
+        segments = segments.filter(s => !(s[0] === start && s[1] === end));
+        segments.push([start, mid], [mid, end]);
+    };
+
+    const mergeSegments = (start, mid, end) => {
+        segments = segments.filter(s =>
+            !((s[0] === start && s[1] === mid) || (s[0] === mid && s[1] === end))
+        );
+        segments.push([start, end]);
+    };
+
+    const mergeParts = (left, right, start, end) => {
+        const mid = start + left.length;
+
+        steps.push({
+            action: 'merge_start',
+            description: `Merging [${start}–${mid - 1}] and [${mid}–${end - 1}]`,
+            array: [...arr],
+            indices: [],
+            segments: snap(),
+            leftRange: [start, mid],
+            rightRange: [mid, end],
+        });
+
         const merged = [];
-        let i = 0;
-        let j = 0;
+        let i = 0, j = 0;
 
         while (i < left.length && j < right.length) {
             steps.push({
-                indices: [startIdx + i, startIdx + left.length + j],
-                action: "compare",
-                description: `Comparing elements ${left[i]} and ${right[j]}`
+                action: 'compare',
+                description: `Comparing ${left[i]} and ${right[j]}`,
+                array: [...arr],
+                indices: [start + i, mid + j],
+                segments: snap(),
+                leftRange: [start, mid],
+                rightRange: [mid, end],
             });
-
-            if (left[i] <= right[j]) {
-                merged.push(left[i]);
-                i++;
-            } else {
-                merged.push(right[j]);
-                j++;
-            }
+            if (left[i] <= right[j]) merged.push(left[i++]);
+            else merged.push(right[j++]);
         }
+        while (i < left.length) merged.push(left[i++]);
+        while (j < right.length) merged.push(right[j++]);
 
-        while (i < left.length) {
-            merged.push(left[i]);
-            i++;
-        }
-
-        while (j < right.length) {
-            merged.push(right[j]);
-            j++;
-        }
-
-        // Copy back to the original array
         for (let k = 0; k < merged.length; k++) {
-            sortedArray[startIdx + k] = merged[k];
+            arr[start + k] = merged[k];
             steps.push({
-                indices: [startIdx + k],
-                action: "write",
-                description: `Writing element ${merged[k]} to position ${startIdx + k}`
+                action: 'write',
+                description: `Writing ${merged[k]} to position ${start + k}`,
+                array: [...arr],
+                indices: [start + k],
+                segments: snap(),
+                leftRange: [start, mid],
+                rightRange: [mid, end],
             });
         }
+
+        mergeSegments(start, mid, end);
+
+        steps.push({
+            action: 'merge_complete',
+            description: `Merged into sorted [${start}–${end - 1}]`,
+            array: [...arr],
+            indices: Array.from({ length: end - start }, (_, k) => start + k),
+            segments: snap(),
+            activeRange: [start, end],
+            leftRange: null,
+            rightRange: null,
+        });
 
         return merged;
     };
 
-    const mergeSortHelper = (startIdx, endIdx) => {
-        if (endIdx - startIdx <= 1) return [sortedArray[startIdx]];
+    const sort = (start, end) => {
+        if (end - start <= 1) return [arr[start]];
 
-        const middleIdx = Math.floor((startIdx + endIdx) / 2);
-        
+        const mid = Math.floor((start + end) / 2);
+
+        splitSegment(start, mid, end);
+
         steps.push({
-            indices: [startIdx, middleIdx, endIdx],
-            action: "split",
-            description: `Splitting array into two parts: [${startIdx}-${middleIdx}] and [${middleIdx + 1}-${endIdx}]`
+            action: 'split',
+            description: `Splitting [${start}–${end - 1}] → [${start}–${mid - 1}] and [${mid}–${end - 1}]`,
+            array: [...arr],
+            indices: [start, end - 1],
+            segments: snap(),
+            leftRange: [start, mid],
+            rightRange: [mid, end],
         });
 
-        const left = mergeSortHelper(startIdx, middleIdx);
-        const right = mergeSortHelper(middleIdx, endIdx);
-        
-        return merge(left, right, startIdx);
+        const left = sort(start, mid);
+        const right = sort(mid, end);
+
+        return mergeParts(left, right, start, end);
     };
 
-    mergeSortHelper(0, sortedArray.length);
+    if (arr.length > 1) sort(0, arr.length);
 
-    return {
-        steps,
-        sortedArray
-    };
+    return { steps, sortedArray: arr };
 };
 
 export const mergeSortInfo = {
@@ -79,5 +116,5 @@ export const mergeSortInfo = {
         worst: "O(n log n)"
     },
     spaceComplexity: "O(n)",
-    description: "Merge Sort is a stable sorting algorithm that uses a divide-and-conquer strategy. It divides the array into smaller subarrays, sorts them, and then merges the sorted subarrays back together."
-}; 
+    description: "Divide-and-conquer algorithm that recursively splits the array in half, sorts each half, then merges the sorted halves back together."
+};

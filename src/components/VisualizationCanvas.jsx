@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import * as d3 from "d3";
 import "./VisualizationCanvas.css";
+import MergeCanvas from "./MergeCanvas";
+
+const MERGE_ALGORITHMS = new Set(['mergeSort', 'bottomUpMergeSort']);
 
 // Importi za algoritme
 import { bubbleSort, bubbleSortInfo } from "../algorithms/bubbleSort";
@@ -18,12 +21,12 @@ const ANIMATION_SPEED = 700;
 const TRANSITION_DURATION = 300;
 
 const BAR_COLORS = {
-    default: "#4CAF50",
-    comparing: "#FFC107",
-    swapping: "#F44336",
-    fixed: "#2196F3",
-    pivot: "#9C27B0",
-    writing: "#FF9800"
+    default: "#3b82f6",
+    comparing: "#f59e0b",
+    swapping: "#ef4444",
+    fixed: "#10b981",
+    pivot: "#8b5cf6",
+    writing: "#f97316"
 };
 
 // Mapa algoritama
@@ -40,6 +43,7 @@ const ALGORITHM_MAP = {
 };
 
 const VisualizationCanvas = ({ array, algorithm }) => {
+    const isMerge = MERGE_ALGORITHMS.has(algorithm);
     // Refs
     const svgRef = useRef(null);
     const containerRef = useRef(null);
@@ -52,6 +56,7 @@ const VisualizationCanvas = ({ array, algorithm }) => {
     const [speed, setSpeed] = useState(1);
     const [algorithmInfo, setAlgorithmInfo] = useState(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+    const [log, setLog] = useState([]);
 
     // Inicijalizacija algoritma
     useEffect(() => {
@@ -59,6 +64,7 @@ const VisualizationCanvas = ({ array, algorithm }) => {
         setStepIndex(0);
         setSteps([]);
         setIsPlaying(false);
+        setLog([]);
         
         if (ALGORITHM_MAP[algorithm]) {
             const { steps } = ALGORITHM_MAP[algorithm].func(array);
@@ -84,7 +90,7 @@ const VisualizationCanvas = ({ array, algorithm }) => {
 
     // D3 vizualizacija
     const updateVisualization = useCallback(() => {
-        if (!svgRef.current || currentArray.length === 0) return;
+        if (isMerge || !svgRef.current || currentArray.length === 0) return;
 
         const svg = d3.select(svgRef.current);
         svg.selectAll("*").remove();
@@ -150,7 +156,7 @@ const VisualizationCanvas = ({ array, algorithm }) => {
             .attr("y", d => yScale(d) - 10)
             .attr("text-anchor", "middle")
             .attr("font-size", "14px")
-            .attr("fill", "#1e40af")
+            .attr("fill", "#9ca3af")
             .text(d => d);
 
         // Update colors based on current step
@@ -190,20 +196,25 @@ const VisualizationCanvas = ({ array, algorithm }) => {
         if (isPlaying && stepIndex < steps.length) {
             timeoutId = setTimeout(() => {
                 const step = steps[stepIndex];
-                
-                if (step.action === "swap") {
-                    const [i, j] = step.indices;
-                    const newArray = [...currentArray];
-                    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-                    setCurrentArray(newArray);
-                } else if (step.action === "write") {
-                    const [index] = step.indices;
-                    const newArray = [...currentArray];
-                    const newValue = parseInt(step.description.match(/\d+/)[0]);
-                    newArray[index] = newValue;
-                    setCurrentArray(newArray);
+
+                // Snapshot-based algorithms (merge variants) carry the full
+                // array in each step — no mutation needed here.
+                if (!step.array) {
+                    if (step.action === "swap") {
+                        const [i, j] = step.indices;
+                        const newArray = [...currentArray];
+                        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                        setCurrentArray(newArray);
+                    } else if (step.action === "write") {
+                        const [index] = step.indices;
+                        const newArray = [...currentArray];
+                        const newValue = parseInt(step.description.match(/\d+/)[0]);
+                        newArray[index] = newValue;
+                        setCurrentArray(newArray);
+                    }
                 }
-                
+
+                setLog(prev => [{ id: stepIndex, action: step.action, description: step.description }, ...prev]);
                 setStepIndex(prev => prev + 1);
             }, ANIMATION_SPEED / speed);
         } else if (stepIndex >= steps.length) {
@@ -220,6 +231,7 @@ const VisualizationCanvas = ({ array, algorithm }) => {
         setIsPlaying(false);
         setStepIndex(0);
         setCurrentArray([...array]);
+        setLog([]);
     };
     const handleSpeedChange = (newSpeed) => setSpeed(Number(newSpeed));
 
@@ -248,12 +260,19 @@ const VisualizationCanvas = ({ array, algorithm }) => {
             <div className="visualization-group">
                 {/* Visualization Canvas */}
                 <div className="visualization-container" ref={containerRef}>
-                    <svg 
-                        ref={svgRef} 
-                        width={dimensions.width} 
-                        height={dimensions.height}
-                        className="visualization-canvas"
-                    />
+                    {isMerge ? (
+                        <MergeCanvas
+                            step={steps[stepIndex] ?? null}
+                            dimensions={dimensions}
+                        />
+                    ) : (
+                        <svg
+                            ref={svgRef}
+                            width={dimensions.width}
+                            height={dimensions.height}
+                            className="visualization-canvas"
+                        />
+                    )}
                 </div>
 
                 {/* Controls */}
@@ -293,11 +312,26 @@ const VisualizationCanvas = ({ array, algorithm }) => {
                 </div>
             </div>
 
-            {/* Step Description */}
-            <div className="algorithm-step">
-                {steps[stepIndex] && (
-                    <p>{steps[stepIndex].description}</p>
-                )}
+            {/* Execution Log */}
+            <div className="execution-log">
+                <div className="execution-log-header">
+                    <span className="execution-log-title">Execution Log</span>
+                    {log.length > 0 && (
+                        <span className="execution-log-count">{log.length} steps</span>
+                    )}
+                </div>
+                <div className="execution-log-entries">
+                    {log.length === 0 ? (
+                        <p className="execution-log-empty">Log will appear here once the algorithm starts.</p>
+                    ) : (
+                        log.map((entry) => (
+                            <div key={entry.id} className={`log-entry log-entry--${entry.action}`}>
+                                <span className="log-entry-badge">{entry.action}</span>
+                                <span className="log-entry-text">{entry.description}</span>
+                            </div>
+                        ))
+                    )}
+                </div>
             </div>
         </div>
     );

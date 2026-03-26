@@ -1,100 +1,49 @@
 /* App.css */
 .App {
     display: flex;
-    flex-direction: column; /* Stack Navbar and main content vertically */
-    height: 100vh; /* Full height for the app */
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-.main-content {
+main {
+    flex: 1;
+    padding-top: 60px; /* navbar height */
+}
+
+/* ── Visualization view ─────────────────────────────────────── */
+.viz-view {
     display: flex;
-    flex-direction: row;
-    
-    
-    
+    flex-direction: column;
 }
 
-.sidebar {
-    width: 200px;
-    background-color: #f4f4f4;
-    padding: 20px;
-    height: 100%;
-    
+/* ── Array input bar ────────────────────────────────────────── */
+.array-input-bar {
+    padding: 16px 32px 0;
 }
-
-.sidebar button {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 5px;
-    cursor: pointer;
-    background-color: #CCE7FF;
-    color: black;
-    border: none;
-    border-radius: 4px;
-    font-weight: bold;
-}
-
-.sidebar button:hover {
-    background-color: #B3D9FF;
-}
-.content-container {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-size: 24px;
-  margin-bottom: 15px;
-  text-align: center;
-  color: #333;
-}
-
-
 
 .array-input {
-  width: 100%;
-  max-width: 300px;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-.visualization-canvas {
-  background-color: #f9f9f9;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  margin-top: 20px;
+    width: 100%;
+    max-width: 480px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    background: #fff;
+    color: #111827;
+    transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.array-input-container {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-.start-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  color: white;
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
+.array-input::placeholder {
+    color: #c0c9d8;
 }
 
-
-.start-button:hover {
-  background-color: #45A049;
+.array-input:hover {
+    border-color: #c7d2e8;
 }
 
-.start-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+.array-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }

@@ -1,136 +1,106 @@
+/* Sidebar.css */
 .sidebar {
-    background-color: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
-    height: fit-content;
+    width: 240px;
+    min-width: 240px;
+    background-color: #1c2b4b;
+    min-height: calc(100vh - 60px);
+    padding: 24px 14px;
+    display: flex;
+    flex-direction: column;
     position: sticky;
-    top: 76px;
+    top: 60px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
 }
 
 .sidebar h2 {
-    color: #1e40af;
-    font-size: 20px;
-    margin-bottom: 24px;
-    padding-bottom: 12px;
-    border-bottom: 2px solid #e2e8f0;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 10px 10px;
+    padding: 0;
+    border: none;
 }
 
 .sidebar h2::before {
-    content: '';
-    display: block;
-    width: 3px;
-    height: 20px;
-    background-color: #3b82f6;
-    border-radius: 2px;
+    display: none;
 }
 
 .algorithm-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 2px;
 }
 
 .algorithm-button {
     width: 100%;
-    padding: 16px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    background-color: #f8fafc;
-    color: #475569;
-    font-size: 14px;
+    padding: 9px 12px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 13.5px;
     font-weight: 500;
+    font-family: 'Inter', sans-serif;
     text-align: left;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color 0.12s, color 0.12s;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: relative;
+    letter-spacing: 0.01em;
 }
 
-.algorithm-button::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 3px;
-    background-color: #3b82f6;
-    transform: scaleY(0);
-    transition: transform 0.2s ease;
-    border-radius: 2px;
+.algorithm-button::before,
+.algorithm-button::after {
+    display: none;
 }
 
 .algorithm-button:hover {
-    background-color: #eff6ff;
-    border-color: #3b82f6;
-    transform: translateX(4px);
+    background-color: rgba(255, 255, 255, 0.07);
+    color: #e2e8f0;
+    transform: none;
+    box-shadow: none;
 }
 
 .algorithm-button.selected {
-    background-color: #eff6ff;
-    border-color: #3b82f6;
-    color: #1e40af;
+    background-color: #2563eb;
+    color: #ffffff;
     font-weight: 600;
+    box-shadow: 0 1px 3px rgba(37, 99, 235, 0.4);
 }
 
-.algorithm-button.selected::before {
-    transform: scaleY(1);
-}
-
-/* Dodajemo ikone za različite algoritme */
-.algorithm-button::after {
-    content: '→';
-    opacity: 0;
-    transform: translateX(-8px);
-    transition: all 0.2s ease;
-}
-
-.algorithm-button:hover::after,
-.algorithm-button.selected::after {
-    opacity: 1;
-    transform: translateX(0);
+.algorithm-button.selected:hover {
+    background-color: #1d4ed8;
 }
 
 @media (max-width: 1200px) {
     .sidebar {
         position: static;
-        margin-bottom: 24px;
+        height: auto;
+        min-height: auto;
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 16px;
+        gap: 8px;
+    }
+
+    .sidebar h2 {
+        width: 100%;
+        margin: 0 0 4px 0;
     }
 
     .algorithm-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 16px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .algorithm-button {
+        width: auto;
     }
 }
-
-@media (max-width: 768px) {
-    .algorithm-button {
-        text-align: center;
-        justify-content: center;
-    }
-
-    .algorithm-button:hover {
-        transform: translateY(-2px);
-    }
-
-    .algorithm-button::before {
-        width: 100%;
-        height: 3px;
-        top: auto;
-        bottom: 0;
-        transform: scaleX(0);
-    }
-
-    .algorithm-button.selected::before {
-        transform: scaleX(1);
-    }
-
-    .algorithm-button::after {
-        display: none;
-    }
-} 
