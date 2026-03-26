@@ -1,0 +1,10 @@
+.tree-canvas-wrap {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.tree-svg {
+    display: block;
+    transition: height 0.3s ease;
+}

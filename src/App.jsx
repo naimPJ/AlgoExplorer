@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Navbar from "./components/Navbar";
 import LandingPage from "./pages/LandingPage";
 import VisualizationCanvas from "./components/VisualizationCanvas";
+import TreePage from "./pages/TreePage";
 import "./App.css";
 
 const App = () => {
@@ -14,6 +15,8 @@ const App = () => {
         setArray([]);
         setView("visualization");
     };
+
+    const handleOpenTree = () => setView("tree");
 
     const handleBack = () => {
         setView("landing");
@@ -35,7 +38,9 @@ const App = () => {
             <Navbar view={view} algorithmName={algorithmName} onHome={handleBack} />
             <main>
                 {view === "landing" ? (
-                    <LandingPage onSelect={handleSelectAlgorithm} />
+                    <LandingPage onSelect={handleSelectAlgorithm} onOpenTree={handleOpenTree} />
+                ) : view === "tree" ? (
+                    <TreePage />
                 ) : (
                     <div className="viz-view">
                         <div className="array-input-bar">

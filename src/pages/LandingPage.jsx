@@ -190,22 +190,66 @@ const HeroVisualization = () => {
     );
 };
 
-const LandingPage = ({ onSelect }) => (
+const BSTCard = ({ onOpenTree }) => (
+    <div className="algo-card bst-card" style={{ "--accent": "#8b5cf6" }}>
+        <div className="algo-card-top">
+            <div className="algo-card-header">
+                <span className="algo-category">Data Structure</span>
+                <svg width="88" height="36" aria-hidden="true" viewBox="0 0 88 36">
+                    {/* Simple tree icon */}
+                    <circle cx="44" cy="7"  r="5" fill="#8b5cf6" opacity="0.7" />
+                    <circle cx="24" cy="22" r="5" fill="#8b5cf6" opacity="0.55" />
+                    <circle cx="64" cy="22" r="5" fill="#8b5cf6" opacity="0.55" />
+                    <circle cx="14" cy="34" r="4" fill="#8b5cf6" opacity="0.4" />
+                    <circle cx="34" cy="34" r="4" fill="#8b5cf6" opacity="0.4" />
+                    <circle cx="54" cy="34" r="4" fill="#8b5cf6" opacity="0.4" />
+                    <circle cx="74" cy="34" r="4" fill="#8b5cf6" opacity="0.4" />
+                    <line x1="44" y1="12" x2="24" y2="17" stroke="#8b5cf6" strokeWidth="1.5" opacity="0.4" />
+                    <line x1="44" y1="12" x2="64" y2="17" stroke="#8b5cf6" strokeWidth="1.5" opacity="0.4" />
+                    <line x1="24" y1="27" x2="14" y2="30" stroke="#8b5cf6" strokeWidth="1.5" opacity="0.3" />
+                    <line x1="24" y1="27" x2="34" y2="30" stroke="#8b5cf6" strokeWidth="1.5" opacity="0.3" />
+                    <line x1="64" y1="27" x2="54" y2="30" stroke="#8b5cf6" strokeWidth="1.5" opacity="0.3" />
+                    <line x1="64" y1="27" x2="74" y2="30" stroke="#8b5cf6" strokeWidth="1.5" opacity="0.3" />
+                </svg>
+            </div>
+            <h3 className="algo-name">Binary Search Tree</h3>
+            <p className="algo-description">
+                Interactively insert, search, and delete nodes. Watch the BST maintain its ordering property — step by step through the execution log.
+            </p>
+        </div>
+        <div className="algo-card-bottom">
+            <div className="complexity-row">
+                <div className="complexity-badge"><span className="complexity-badge-label">Search</span><span className="complexity-badge-value" style={{ color: "#3b82f6" }}>O(log n)</span></div>
+                <div className="complexity-badge"><span className="complexity-badge-label">Insert</span><span className="complexity-badge-value" style={{ color: "#3b82f6" }}>O(log n)</span></div>
+                <div className="complexity-badge"><span className="complexity-badge-label">Delete</span><span className="complexity-badge-value" style={{ color: "#f59e0b" }}>O(log n)</span></div>
+            </div>
+            <button className="algo-visualize-btn" onClick={onOpenTree}>
+                Explore
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+);
+
+const LandingPage = ({ onSelect, onOpenTree }) => (
     <div className="landing">
 
         {/* ── Hero ─────────────────────────────────────────────── */}
         <section className="hero">
             <div className="hero-content">
-                <span className="hero-tag">Sorting Algorithm Visualizer</span>
+                <span className="hero-tag">Algorithm Visualizer</span>
                 <h1 className="hero-title">Watch algorithms<br />think in real time</h1>
                 <p className="hero-sub">
-                    Choose from {ALGORITHMS.length} classic sorting algorithms and step through
-                    every comparison, swap, and merge — at your own pace.
+                    Choose from {ALGORITHMS.length} classic sorting algorithms or explore
+                    an interactive Binary Search Tree — step through every comparison,
+                    swap, and merge at your own pace.
                 </p>
                 <div className="hero-stats">
                     <span>{ALGORITHMS.length} Algorithms</span>
                     <span className="hero-stat-dot" />
-                    <span>Step-by-step playback</span>
+                    <span>Interactive BST</span>
                     <span className="hero-stat-dot" />
                     <span>Execution log</span>
                 </div>
@@ -227,6 +271,14 @@ const LandingPage = ({ onSelect }) => (
                 </section>
             );
         })}
+
+        {/* ── Data Structures ───────────────────────────────────── */}
+        <section className="algo-section">
+            <h2 className="algo-section-title">Data Structures</h2>
+            <div className="algo-grid">
+                <BSTCard onOpenTree={onOpenTree} />
+            </div>
+        </section>
 
     </div>
 );
