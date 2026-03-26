@@ -239,7 +239,7 @@ const LandingPage = ({ onSelect, onOpenTree }) => (
         {/* ── Hero ─────────────────────────────────────────────── */}
         <section className="hero">
             <div className="hero-content">
-                <span className="hero-tag">Algorithm Visualizer</span>
+                <span className="hero-tag">AlgoExplorer</span>
                 <h1 className="hero-title">Watch algorithms<br />think in real time</h1>
                 <p className="hero-sub">
                     Choose from {ALGORITHMS.length} classic sorting algorithms or explore

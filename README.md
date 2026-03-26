@@ -1,70 +1,131 @@
-# Getting Started with Create React App
+# AlgoExplorer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An interactive algorithm visualizer built as a **Senior Design Project** at the International Burch University, developed under the mentorship of **STA Aldin Kovacevic**.
 
-## Available Scripts
+AlgoExplorer lets you watch sorting algorithms and data structures operate step by step — every comparison, swap, merge, and tree traversal is animated in real time with a live execution log that records the full history of what happened.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Sorting Algorithms
+Nine classic algorithms are available, each with animated bar charts and a color-coded execution log:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+| Algorithm | Category | Time (avg) | Space |
+|---|---|---|---|
+| Bubble Sort | Comparison | O(n²) | O(1) |
+| Selection Sort | Comparison | O(n²) | O(1) |
+| Insertion Sort | Comparison | O(n²) | O(1) |
+| Shell Sort | Comparison | O(n log² n) | O(1) |
+| Merge Sort | Divide & Conquer | O(n log n) | O(n) |
+| Bottom-Up Merge Sort | Divide & Conquer | O(n log n) | O(n) |
+| Quick Sort | Divide & Conquer | O(n log n) | O(n) |
+| Radix Sort | Non-comparison | O(nk) | O(n+k) |
+| Counting Sort | Non-comparison | O(n+k) | O(k) |
 
-### `npm test`
+- Enter your own array (comma-separated) or use the default
+- Step through at adjustable speed (0.5×, 1×, 2×, 3×)
+- Pause and resume at any point
+- Execution log stacks every step — compare, swap, pivot, merge — so you can review the full operation history
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Merge sort algorithms get a dedicated split/merge canvas that visualizes the recursive partition state with colored segment blocks showing left group, right group, and merged regions.
 
-### `npm run build`
+### Interactive Binary Search Tree
+A fully interactive BST canvas where you can:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Insert** a value and watch the algorithm walk the tree to find the correct position
+- **Search** for a value and follow the comparison path node by node
+- **Delete** a node — handles all three cases (leaf, one child, two children via inorder successor) with each case shown in the log
+- **Traverse** inorder, preorder, or postorder — nodes light up as they are visited, and the final sequence is displayed in a result banner
+- **Generate a random tree** with 8 values for a quick start
+- Adjustable animation speed and pause control
+- Full execution log with color-coded badges per action type (go left/right, found, not found, find successor, replace with successor, etc.)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Landing Dashboard
+The home page is a dashboard with:
+- An animated live bubble sort demo in the hero section
+- Algorithm cards grouped by category (Comparison, Divide & Conquer, Non-comparison, Data Structures), each showing a mini bar chart preview and Big-O complexity badges
+- One-click navigation to any visualizer
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## Tech Stack
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- **React 18** — component-based UI with hooks (useState, useEffect, useCallback, useRef)
+- **Vite** — build tool and dev server (migrated from Create React App)
+- **D3.js** — SVG rendering for bar charts and the BST canvas
+- **Inter** — UI font (via Google Fonts)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Getting Started
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Prerequisites
 
-## Learn More
+- Node.js 18 or later
+- npm
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Install dependencies
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+npm install
+```
 
-### Code Splitting
+### Run in development
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+npm run dev
+```
 
-### Analyzing the Bundle Size
+Opens at `http://localhost:5173` by default. The page hot-reloads on every save.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Build for production
 
-### Making a Progressive Web App
+```bash
+npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Output goes to `dist/`. Preview the production build locally with:
 
-### Advanced Configuration
+```bash
+npm run preview
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## Project Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```
+src/
+├── algorithms/          # Pure algorithm logic — each returns { steps, tree/array }
+│   ├── bubbleSort.js
+│   ├── selectionSort.js
+│   ├── insertionSort.js
+│   ├── shellSort.js
+│   ├── mergeSort.js
+│   ├── bottomUpMergeSort.js
+│   ├── quickSort.js
+│   ├── radixSort.js
+│   ├── countingSort.js
+│   └── bst.js           # BST: insert, search, remove, traverse, buildTree
+├── components/
+│   ├── Navbar.jsx        # Context-aware breadcrumb navbar
+│   ├── VisualizationCanvas.jsx  # Sorting canvas + execution log
+│   ├── MergeCanvas.jsx   # Dedicated split/merge visualization
+│   ├── TreeCanvas.jsx    # D3 BST renderer with inorder layout
+│   └── ...css
+├── pages/
+│   ├── LandingPage.jsx   # Dashboard with hero + algorithm cards
+│   ├── TreePage.jsx      # Interactive BST page
+│   └── ...css
+├── assets/
+│   └── logo.png
+├── App.jsx               # Root — manages view state (landing / visualization / tree)
+└── index.jsx
+```
 
-### `npm run build` fails to minify
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Academic Context
+
+This project was developed as part of the **Senior Design** curriculum at the **International Burch University (IBU)**, under the mentorship of **STA Aldin Kovacevic**. The goal was to build an educational tool that makes abstract algorithmic concepts tangible and approachable — bridging the gap between textbook pseudocode and actual runtime behavior.
