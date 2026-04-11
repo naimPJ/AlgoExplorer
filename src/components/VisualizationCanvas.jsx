@@ -235,6 +235,34 @@ const VisualizationCanvas = ({ array, algorithm }) => {
     };
     const handleSpeedChange = (newSpeed) => setSpeed(Number(newSpeed));
 
+    const handleLogEntryClick = (entry) => {
+        const targetIdx = entry.id;
+        setIsPlaying(false);
+
+        if (isMerge) {
+            setStepIndex(targetIdx);
+        } else {
+            // Replay mutations from the original array up to (but not including) targetIdx
+            const arr = [...array];
+            for (let i = 0; i < targetIdx; i++) {
+                const s = steps[i];
+                if (s.action === 'swap') {
+                    const [a, b] = s.indices;
+                    [arr[a], arr[b]] = [arr[b], arr[a]];
+                } else if (s.action === 'write') {
+                    const [index] = s.indices;
+                    const newValue = parseInt(s.description.match(/\d+/)[0]);
+                    arr[index] = newValue;
+                }
+            }
+            setCurrentArray(arr);
+            setStepIndex(targetIdx);
+        }
+
+        // Trim log to only the steps that have already been executed before this point
+        setLog(prev => prev.filter(e => e.id < targetIdx));
+    };
+
     return (
         <div className="visualization-wrapper">
             {/* Algorithm Info */}
@@ -325,7 +353,11 @@ const VisualizationCanvas = ({ array, algorithm }) => {
                         <p className="execution-log-empty">Log will appear here once the algorithm starts.</p>
                     ) : (
                         log.map((entry) => (
-                            <div key={entry.id} className={`log-entry log-entry--${entry.action}`}>
+                            <div
+                                key={entry.id}
+                                className={`log-entry log-entry--${entry.action} log-entry--clickable`}
+                                onClick={() => handleLogEntryClick(entry)}
+                            >
                                 <span className="log-entry-badge">{entry.action}</span>
                                 <span className="log-entry-text">{entry.description}</span>
                             </div>

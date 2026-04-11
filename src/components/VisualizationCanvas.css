@@ -427,6 +427,15 @@
     line-height: 1.4;
 }
 
+.log-entry--clickable {
+    cursor: pointer;
+}
+
+.log-entry--clickable:hover {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+
 /* Badge colors per action */
 .log-entry--comparing .log-entry-badge  { background: #fef3c7; color: #92400e; }
 .log-entry--swapping  .log-entry-badge  { background: #fee2e2; color: #991b1b; }

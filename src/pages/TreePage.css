@@ -265,6 +265,15 @@
     animation: tlogIn 0.15s ease;
 }
 
+.tlog-entry--clickable {
+    cursor: pointer;
+}
+
+.tlog-entry--clickable:hover {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+
 .tlog-badge {
     font-size: 10px;
     font-weight: 700;

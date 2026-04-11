@@ -21,10 +21,14 @@ const BADGE_STYLE = {
     traverse_done:         { bg: '#d1fae5', color: '#065f46' },
 };
 
-const LogEntry = ({ entry }) => {
+const LogEntry = ({ entry, onEntryClick }) => {
     const style = BADGE_STYLE[entry.action] ?? { bg: '#f3f4f6', color: '#374151' };
+    const clickable = entry.opIdx !== undefined;
     return (
-        <div className="tlog-entry">
+        <div
+            className={`tlog-entry${clickable ? ' tlog-entry--clickable' : ''}`}
+            onClick={() => clickable && onEntryClick(entry)}
+        >
             <span className="tlog-badge" style={{ background: style.bg, color: style.color }}>
                 {entry.action.replace(/_/g, ' ')}
             </span>
@@ -47,6 +51,8 @@ const TreePage = () => {
     const [traversalResult, setTraversalResult] = useState(null);
     const [canvasWidth, setCanvasWidth] = useState(0);
     const canvasRef = useRef(null);
+    const opContextsRef   = useRef([]);
+    const currentOpIdxRef = useRef(-1);
 
     // Measure canvas width
     useEffect(() => {
@@ -75,6 +81,8 @@ const TreePage = () => {
                 id: `${Date.now()}-${stepIdx}`,
                 action: s.action,
                 description: s.description,
+                opIdx: currentOpIdxRef.current,
+                stepIdx: stepIdx,
             }, ...prev]);
             setStepIdx(i => i + 1);
         }, delay);
@@ -83,12 +91,19 @@ const TreePage = () => {
     }, [isPlaying, stepIdx, steps, pendingTree, speed]);
 
     const runOperation = useCallback((result) => {
+        const opIdx = opContextsRef.current.length;
+        currentOpIdxRef.current = opIdx;
+        opContextsRef.current.push({
+            steps: result.steps,
+            treeBefore: tree,
+            finalTree: result.tree,
+        });
         setSteps(result.steps);
         setPendingTree(result.tree);
         setStepIdx(0);
         setIsPlaying(true);
         setTraversalResult(null);
-    }, []);
+    }, [tree]);
 
     const getInput = () => {
         const v = parseInt(inputValue, 10);
@@ -164,9 +179,22 @@ const TreePage = () => {
         setTraversalResult(null);
     };
 
+    const handleLogEntryClick = (entry) => {
+        const ctx = opContextsRef.current[entry.opIdx];
+        if (!ctx) return;
+        setIsPlaying(false);
+        setTree(ctx.treeBefore);
+        setSteps(ctx.steps);
+        setPendingTree(ctx.finalTree);
+        setStepIdx(entry.stepIdx);
+        setTraversalResult(null);
+    };
+
     const handlePause = () => setIsPlaying(false);
 
     const handleReset = () => {
+        opContextsRef.current   = [];
+        currentOpIdxRef.current = -1;
         setTree(null);
         setSteps([]);
         setStepIdx(0);
@@ -298,7 +326,7 @@ const TreePage = () => {
                                 Log will appear here as you interact with the tree.
                             </p>
                         ) : (
-                            log.map(entry => <LogEntry key={entry.id} entry={entry} />)
+                            log.map(entry => <LogEntry key={entry.id} entry={entry} onEntryClick={handleLogEntryClick} />)
                         )}
                     </div>
                 </div>

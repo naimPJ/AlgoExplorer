@@ -242,14 +242,13 @@ const LandingPage = ({ onSelect, onOpenTree }) => (
                 <span className="hero-tag">AlgoExplorer</span>
                 <h1 className="hero-title">Watch algorithms<br />think in real time</h1>
                 <p className="hero-sub">
-                    Choose from {ALGORITHMS.length} classic sorting algorithms or explore
-                    an interactive Binary Search Tree — step through every comparison,
+                    Explore classic sorting algorithms and interactive data structures — step through every comparison,
                     swap, and merge at your own pace.
                 </p>
                 <div className="hero-stats">
-                    <span>{ALGORITHMS.length} Algorithms</span>
+                    <span>Sorting Algorithms</span>
                     <span className="hero-stat-dot" />
-                    <span>Interactive BST</span>
+                    <span>Data Structures</span>
                     <span className="hero-stat-dot" />
                     <span>Execution log</span>
                 </div>
