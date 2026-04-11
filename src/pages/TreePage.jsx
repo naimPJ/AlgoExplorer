@@ -42,6 +42,7 @@ const TreePage = () => {
     const [pendingTree, setPendingTree] = useState(null);
     const [log,         setLog]         = useState([]);
     const [inputValue,  setInputValue]  = useState('');
+    const [listInput,   setListInput]   = useState('');
     const [speed,       setSpeed]       = useState(1);
     const [traversalResult, setTraversalResult] = useState(null);
     const [canvasWidth, setCanvasWidth] = useState(0);
@@ -122,6 +123,26 @@ const TreePage = () => {
         runOperation(result);
     };
 
+    const handleBuildFromList = () => {
+        if (isPlaying) return;
+        const values = listInput
+            .split(',')
+            .map(s => parseInt(s.trim(), 10))
+            .filter(n => !isNaN(n));
+        if (values.length === 0) return;
+        const newTree = bst.buildTree(values);
+        setTree(newTree);
+        setLog([{
+            id: Date.now(),
+            action: 'insert',
+            description: `Built tree from list: [${values.join(', ')}]`,
+        }]);
+        setSteps([]);
+        setStepIdx(0);
+        setIsPlaying(false);
+        setTraversalResult(null);
+    };
+
     const handleRandom = () => {
         if (isPlaying) return;
         const pool = Array.from({ length: 99 }, (_, i) => i + 1);
@@ -182,6 +203,24 @@ const TreePage = () => {
                     </button>
                     <button className="tree-btn tree-btn--danger" onClick={handleDelete} disabled={isPlaying || noTree}>
                         Delete
+                    </button>
+                </div>
+
+                <div className="tree-ctrl-divider" />
+
+                <div className="tree-ctrl-group">
+                    <span className="tree-ctrl-label">List</span>
+                    <input
+                        className="tree-list-input"
+                        type="text"
+                        placeholder="e.g. 50, 30, 70, 20"
+                        value={listInput}
+                        onChange={e => setListInput(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && handleBuildFromList()}
+                        disabled={isPlaying}
+                    />
+                    <button className="tree-btn tree-btn--primary" onClick={handleBuildFromList} disabled={isPlaying}>
+                        Build Tree
                     </button>
                 </div>
 

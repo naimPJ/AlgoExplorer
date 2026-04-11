@@ -63,6 +63,25 @@
 .tree-input::-webkit-inner-spin-button,
 .tree-input::-webkit-outer-spin-button { -webkit-appearance: none; }
 
+.tree-list-input {
+    width: 200px;
+    padding: 7px 10px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 7px;
+    font-size: 13.5px;
+    font-family: 'Inter', sans-serif;
+    color: #111827;
+    background: #f9fafb;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.tree-list-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
 /* Buttons */
 .tree-btn {
     padding: 7px 14px;
