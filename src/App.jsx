@@ -1,12 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import LandingPage from "./pages/LandingPage";
 import VisualizationCanvas from "./components/VisualizationCanvas";
 import TreePage from "./pages/TreePage";
+import AuthPage from "./pages/AuthPage";
+import { AuthProvider } from "./context/AuthContext";
+import { useAuth } from "./context/useAuth";
 import "./App.css";
 
-const App = () => {
+const AppInner = () => {
+    const { loginWithToken } = useAuth();
     const [view, setView] = useState("landing");
+
+    useEffect(() => {
+        if (window.location.pathname === "/auth/callback") {
+            const params = new URLSearchParams(window.location.search);
+            const token  = params.get("token");
+            const user   = params.get("user");
+            if (token && user) {
+                loginWithToken(token, JSON.parse(user));
+            }
+            window.history.replaceState({}, "", "/");
+        }
+    }, []);
     const [selectedAlgorithm, setSelectedAlgorithm] = useState("bubbleSort");
     const [array, setArray] = useState([]);
     const [randomCount, setRandomCount] = useState(10);
@@ -23,6 +39,9 @@ const App = () => {
         setView("landing");
         setArray([]);
     };
+
+    const handleOpenAuth = () => setView("auth");
+    const handleAuthSuccess = () => setView("landing");
 
     const handleArrayInput = (input) => {
         const parsed = input.split(",").map(Number).filter((n) => !isNaN(n));
@@ -42,10 +61,12 @@ const App = () => {
 
     return (
         <div className="App">
-            <Navbar view={view} algorithmName={algorithmName} onHome={handleBack} />
+            <Navbar view={view} algorithmName={algorithmName} onHome={handleBack} onOpenAuth={handleOpenAuth} />
             <main>
-                {view === "landing" ? (
-                    <LandingPage onSelect={handleSelectAlgorithm} onOpenTree={handleOpenTree} />
+                {view === "auth" ? (
+                    <AuthPage onSuccess={handleAuthSuccess} onBack={handleBack} />
+                ) : view === "landing" ? (
+                    <LandingPage onSelect={handleSelectAlgorithm} onOpenTree={handleOpenTree} onOpenAuth={handleOpenAuth} />
                 ) : view === "tree" ? (
                     <TreePage />
                 ) : (
@@ -86,5 +107,11 @@ const App = () => {
         </div>
     );
 };
+
+const App = () => (
+    <AuthProvider>
+        <AppInner />
+    </AuthProvider>
+);
 
 export default App;

@@ -1,8 +1,10 @@
 import React from "react";
 import "./Navbar.css";
 import logo from "../assets/logo.png";
+import { useAuth } from "../context/useAuth";
 
-const Navbar = ({ view, algorithmName, onHome }) => {
+const Navbar = ({ view, algorithmName, onHome, onOpenAuth }) => {
+    const { user, logout } = useAuth();
     const inViz  = view === "visualization";
     const inTree = view === "tree";
     const inSub  = inViz || inTree;
@@ -28,6 +30,21 @@ const Navbar = ({ view, algorithmName, onHome }) => {
                             {inTree ? "Binary Search Tree" : algorithmName}
                         </span>
                     </>
+                )}
+            </div>
+
+            <div className="navbar-right">
+                {user ? (
+                    <>
+                        <span className="navbar-username">{user.username}</span>
+                        <button className="navbar-btn navbar-btn--ghost" onClick={logout}>
+                            Sign out
+                        </button>
+                    </>
+                ) : (
+                    <button className="navbar-btn navbar-btn--primary" onClick={onOpenAuth}>
+                        Sign in
+                    </button>
                 )}
             </div>
         </nav>

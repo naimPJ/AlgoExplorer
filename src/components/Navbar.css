@@ -42,6 +42,52 @@
     display: block;
 }
 
+.navbar-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar-username {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.navbar-btn {
+    padding: 7px 16px;
+    border-radius: 7px;
+    font-size: 13.5px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+    white-space: nowrap;
+}
+
+.navbar-btn--primary {
+    background: #2563eb;
+    border: 1.5px solid #2563eb;
+    color: #ffffff;
+}
+
+.navbar-btn--primary:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+}
+
+.navbar-btn--ghost {
+    background: transparent;
+    border: 1.5px solid #e2e8f0;
+    color: #6b7280;
+}
+
+.navbar-btn--ghost:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
 /* Breadcrumb */
 .navbar-sep {
     color: #d1d5db;

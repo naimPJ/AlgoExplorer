@@ -9,6 +9,7 @@ import { quickSortInfo }        from "../algorithms/quickSort";
 import { radixSortInfo }        from "../algorithms/radixSort";
 import { countingSortInfo }     from "../algorithms/countingSort";
 import "./LandingPage.css";
+import { useAuth } from "../context/useAuth";
 
 const META = {
     bubbleSort:        { accent: "#f59e0b", category: "Comparison",      preview: [3,7,1,5,9,2,8,4] },
@@ -233,7 +234,34 @@ const BSTCard = ({ onOpenTree }) => (
     </div>
 );
 
-const LandingPage = ({ onSelect, onOpenTree }) => (
+const AIBanner = ({ onOpenAuth }) => (
+    <section className="ai-banner">
+        <div className="ai-banner-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                <path d="M8 10h8M8 14h5"/>
+            </svg>
+        </div>
+        <div className="ai-banner-body">
+            <h2 className="ai-banner-title">Register for AI assistance</h2>
+            <p className="ai-banner-text">
+                Create a free account to unlock an AI assistant that explains any algorithm in plain language,
+                answers your questions in real time, and helps you understand what is happening at each step —
+                right alongside the visualization.
+            </p>
+        </div>
+        <button className="ai-banner-cta" onClick={onOpenAuth}>
+            Create a free account
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+        </button>
+    </section>
+);
+
+const LandingPage = ({ onSelect, onOpenTree, onOpenAuth }) => {
+    const { user } = useAuth();
+    return (
     <div className="landing">
 
         {/* ── Hero ─────────────────────────────────────────────── */}
@@ -255,6 +283,9 @@ const LandingPage = ({ onSelect, onOpenTree }) => (
             </div>
             <HeroVisualization />
         </section>
+
+        {/* ── AI registration banner ───────────────────────────── */}
+        {!user && <AIBanner onOpenAuth={onOpenAuth} />}
 
         {/* ── Algorithm grid grouped by category ───────────────── */}
         {CATEGORIES.map(cat => {
@@ -280,6 +311,7 @@ const LandingPage = ({ onSelect, onOpenTree }) => (
         </section>
 
     </div>
-);
+    );
+};
 
 export default LandingPage;
