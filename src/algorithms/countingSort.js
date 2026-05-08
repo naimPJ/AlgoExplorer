@@ -4,81 +4,72 @@ export const countingSort = (array) => {
     const steps = [];
     const original = [...array];
     const sortedArray = [...array];
-    const min = Math.min(...array);
-    const max = Math.max(...array);
-    const range = max - min + 1;
-    const count = new Array(range).fill(0);
-    const output = new Array(sortedArray.length).fill(null);
+
+    // Only track buckets for values that actually appear
+    const uniqueVals = [...new Set(original)].sort((a, b) => a - b);
+    const bucketIndex = new Map(uniqueVals.map((v, i) => [v, i]));
+    const bins = new Array(uniqueVals.length).fill(0);
+
+    const snap = () => [...bins];
 
     // Phase 1 — count occurrences
     steps.push({
         indices: [],
         action: "info",
-        description: `Range: ${min} to ${max} (${range} buckets)`,
+        description: `${uniqueVals.length} unique values: ${uniqueVals.join(', ')}`,
         iteration: 1,
         array: original,
-        bins: [...count],
-        binMin: min,
+        bins: snap(),
+        binKeys: uniqueVals,
         activeBin: null,
-        output: [...output],
+        output: null,
         outputActive: null,
     });
 
     for (let i = 0; i < original.length; i++) {
         const num = original[i];
-        count[num - min]++;
+        const bi  = bucketIndex.get(num);
+        bins[bi]++;
         steps.push({
             indices: [i],
             action: "compare",
-            description: `Element ${num} → bucket ${num}: count is now ${count[num - min]}`,
+            description: `Element ${num} → bucket ${num}: count is now ${bins[bi]}`,
             iteration: 1,
             array: original,
-            bins: [...count],
-            binMin: min,
-            activeBin: num - min,
-            output: [...output],
+            bins: snap(),
+            binKeys: uniqueVals,
+            activeBin: bi,
+            output: null,
             outputActive: null,
         });
     }
 
-    // Phase 2 — prefix sums
-    for (let i = 1; i < count.length; i++) {
-        count[i] += count[i - 1];
-        steps.push({
-            indices: [],
-            action: "info",
-            description: `Prefix sum for ${i + min}: ${count[i - 1] - (count[i] - count[i - 1])} + ${count[i] - count[i - 1]} = ${count[i]}`,
-            iteration: 2,
-            array: original,
-            bins: [...count],
-            binMin: min,
-            activeBin: i,
-            output: [...output],
-            outputActive: null,
-        });
+    // Phase 2 — drain buckets in order into output
+    const output = new Array(original.length).fill(null);
+    let pos = 0;
+
+    for (let bi = 0; bi < uniqueVals.length; bi++) {
+        const val = uniqueVals[bi];
+        while (bins[bi] > 0) {
+            output[pos] = val;
+            bins[bi]--;
+            steps.push({
+                indices: [],
+                action: "write",
+                description: `Place ${val} → output[${pos}]`,
+                iteration: 2,
+                array: original,
+                bins: snap(),
+                binKeys: uniqueVals,
+                activeBin: bi,
+                output: [...output],
+                outputActive: pos,
+            });
+            pos++;
+        }
     }
 
-    // Phase 3 — place elements (right to left for stability)
-    for (let i = original.length - 1; i >= 0; i--) {
-        const num = original[i];
-        const pos = count[num - min] - 1;
-        output[pos] = num;
-        count[num - min]--;
-        steps.push({
-            indices: [i],
-            action: "write",
-            description: `Place ${num} (pos ${i}) → output[${pos}]`,
-            iteration: 3,
-            array: original,
-            bins: [...count],
-            binMin: min,
-            activeBin: num - min,
-            output: [...output],
-            outputActive: pos,
-        });
-    }
-
-    // Final — copy back
+    // Copy back
     for (let i = 0; i < sortedArray.length; i++) {
         sortedArray[i] = output[i];
     }
@@ -87,10 +78,10 @@ export const countingSort = (array) => {
         indices: [],
         action: "fixed",
         description: "Array sorted",
-        iteration: 3,
+        iteration: 2,
         array: [...sortedArray],
-        bins: [...count],
-        binMin: min,
+        bins: snap(),
+        binKeys: uniqueVals,
         activeBin: null,
         output: [...output],
         outputActive: null,
