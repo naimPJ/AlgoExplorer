@@ -58,8 +58,11 @@ function layoutTree(root, canvasWidth) {
 }
 
 // ── Node colour ───────────────────────────────────────────────────────────────
-function nodeStyle(value, step) {
-    if (!step) return { fill: '#3b82f6', stroke: '#2563eb', text: '#fff' };
+function nodeStyle(value, step, selectedNode) {
+    if (!step) {
+        if (value === selectedNode) return { fill: '#6366f1', stroke: '#4f46e5', text: '#fff' };
+        return { fill: '#3b82f6', stroke: '#2563eb', text: '#fff' };
+    }
 
     const { action, currentValue, path = [], result = [], successorValue } = step;
 
@@ -94,11 +97,13 @@ function nodeStyle(value, step) {
         return { fill: '#dbeafe', stroke: '#93c5fd', text: '#1e40af' };
     }
 
+    if (value === selectedNode) return { fill: '#6366f1', stroke: '#4f46e5', text: '#fff' };
+
     return { fill: '#3b82f6', stroke: '#2563eb', text: '#fff' };
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-const TreeCanvas = ({ tree, step, width }) => {
+const TreeCanvas = ({ tree, step, width, onNodeClick, selectedNode }) => {
     const svgRef = useRef(null);
 
     useEffect(() => {
@@ -146,8 +151,11 @@ const TreeCanvas = ({ tree, step, width }) => {
 
         // ── Nodes
         nodes.forEach(({ value, px, py }) => {
-            const style = nodeStyle(value, step);
-            const g = svg.append('g').attr('transform', `translate(${px},${py})`);
+            const style = nodeStyle(value, step, selectedNode);
+            const g = svg.append('g')
+                .attr('transform', `translate(${px},${py})`)
+                .style('cursor', onNodeClick ? 'pointer' : 'default')
+                .on('click', () => onNodeClick && onNodeClick(value));
 
             g.append('circle')
                 .attr('r',            NODE_R)
@@ -165,7 +173,7 @@ const TreeCanvas = ({ tree, step, width }) => {
                 .text(value);
         });
 
-    }, [tree, step, width]);
+    }, [tree, step, width, onNodeClick, selectedNode]);
 
     return (
         <div className="tree-canvas-wrap">

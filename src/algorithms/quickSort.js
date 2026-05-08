@@ -1,13 +1,18 @@
 export const quickSort = (array) => {
     const steps = [];
     const sortedArray = [...array];
+    let iterNum = 0;
 
     const partition = (low, high) => {
+        iterNum++;
+        const iteration = iterNum;
         const pivot = sortedArray[high];
+
         steps.push({
             indices: [high],
             action: "pivot",
-            description: `Selected pivot element: ${pivot}`
+            description: `Selected pivot element: ${pivot}`,
+            iteration,
         });
 
         let i = low - 1;
@@ -16,7 +21,8 @@ export const quickSort = (array) => {
             steps.push({
                 indices: [j, high],
                 action: "compare",
-                description: `Comparing element ${sortedArray[j]} with pivot ${pivot}`
+                description: `Comparing element ${sortedArray[j]} with pivot ${pivot}`,
+                iteration,
             });
 
             if (sortedArray[j] <= pivot) {
@@ -26,7 +32,8 @@ export const quickSort = (array) => {
                     steps.push({
                         indices: [i, j],
                         action: "swap",
-                        description: `Swapping elements ${sortedArray[i]} and ${sortedArray[j]}`
+                        description: `Swapping elements ${sortedArray[i]} and ${sortedArray[j]}`,
+                        iteration,
                     });
                 }
             }
@@ -37,9 +44,17 @@ export const quickSort = (array) => {
             steps.push({
                 indices: [i + 1, high],
                 action: "swap",
-                description: `Placing pivot in its final position`
+                description: `Placing pivot in its final position`,
+                iteration,
             });
         }
+
+        steps.push({
+            indices: [i + 1],
+            action: "fixed",
+            description: `Element ${sortedArray[i + 1]} is in its final position`,
+            iteration,
+        });
 
         return i + 1;
     };
@@ -47,11 +62,6 @@ export const quickSort = (array) => {
     const quickSortHelper = (low, high) => {
         if (low < high) {
             const pi = partition(low, high);
-            steps.push({
-                indices: [pi],
-                action: "fixed",
-                description: `Element ${sortedArray[pi]} is in its final position`
-            });
             quickSortHelper(low, pi - 1);
             quickSortHelper(pi + 1, high);
         }
@@ -59,10 +69,7 @@ export const quickSort = (array) => {
 
     quickSortHelper(0, sortedArray.length - 1);
 
-    return {
-        steps,
-        sortedArray
-    };
+    return { steps, sortedArray };
 };
 
 export const quickSortInfo = {
@@ -74,4 +81,4 @@ export const quickSortInfo = {
     },
     spaceComplexity: "O(log n)",
     description: "Quick Sort is an efficient, in-place sorting algorithm that uses a divide-and-conquer strategy. It works by selecting a 'pivot' element and partitioning the array around it."
-}; 
+};

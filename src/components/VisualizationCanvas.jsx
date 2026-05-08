@@ -2,8 +2,10 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import * as d3 from "d3";
 import "./VisualizationCanvas.css";
 import MergeCanvas from "./MergeCanvas";
+import CountingCanvas from "./CountingCanvas";
 
-const MERGE_ALGORITHMS = new Set(['mergeSort', 'bottomUpMergeSort']);
+const MERGE_ALGORITHMS    = new Set(['mergeSort', 'bottomUpMergeSort']);
+const SNAPSHOT_ALGORITHMS = new Set(['mergeSort', 'bottomUpMergeSort', 'countingSort']);
 
 // Importi za algoritme
 import { bubbleSort, bubbleSortInfo } from "../algorithms/bubbleSort";
@@ -43,7 +45,9 @@ const ALGORITHM_MAP = {
 };
 
 const VisualizationCanvas = ({ array, algorithm }) => {
-    const isMerge = MERGE_ALGORITHMS.has(algorithm);
+    const isMerge    = MERGE_ALGORITHMS.has(algorithm);
+    const isCounting = algorithm === 'countingSort';
+    const isSnapshot = SNAPSHOT_ALGORITHMS.has(algorithm);
     // Refs
     const svgRef = useRef(null);
     const containerRef = useRef(null);
@@ -90,7 +94,7 @@ const VisualizationCanvas = ({ array, algorithm }) => {
 
     // D3 vizualizacija
     const updateVisualization = useCallback(() => {
-        if (isMerge || !svgRef.current || currentArray.length === 0) return;
+        if (isSnapshot || !svgRef.current || currentArray.length === 0) return;
 
         const svg = d3.select(svgRef.current);
         svg.selectAll("*").remove();
@@ -214,7 +218,7 @@ const VisualizationCanvas = ({ array, algorithm }) => {
                     }
                 }
 
-                setLog(prev => [{ id: stepIndex, action: step.action, description: step.description }, ...prev]);
+                setLog(prev => [{ id: stepIndex, action: step.action, description: step.description, iteration: step.iteration }, ...prev]);
                 setStepIndex(prev => prev + 1);
             }, ANIMATION_SPEED / speed);
         } else if (stepIndex >= steps.length) {
@@ -239,7 +243,7 @@ const VisualizationCanvas = ({ array, algorithm }) => {
         const targetIdx = entry.id;
         setIsPlaying(false);
 
-        if (isMerge) {
+        if (isSnapshot) {
             setStepIndex(targetIdx);
         } else {
             // Replay mutations from the original array up to (but not including) targetIdx
@@ -290,6 +294,11 @@ const VisualizationCanvas = ({ array, algorithm }) => {
                 <div className="visualization-container" ref={containerRef}>
                     {isMerge ? (
                         <MergeCanvas
+                            step={steps[stepIndex] ?? null}
+                            dimensions={dimensions}
+                        />
+                    ) : isCounting ? (
+                        <CountingCanvas
                             step={steps[stepIndex] ?? null}
                             dimensions={dimensions}
                         />
@@ -345,7 +354,12 @@ const VisualizationCanvas = ({ array, algorithm }) => {
                 <div className="execution-log-header">
                     <span className="execution-log-title">Execution Log</span>
                     {log.length > 0 && (
-                        <span className="execution-log-count">{log.length} steps</span>
+                        <div className="execution-log-counters">
+                            <span className="execution-log-count">{log.length} steps</span>
+                            {log[0]?.iteration != null && (
+                                <span className="execution-log-iteration">Iteration {log[0].iteration}</span>
+                            )}
+                        </div>
                     )}
                 </div>
                 <div className="execution-log-entries">

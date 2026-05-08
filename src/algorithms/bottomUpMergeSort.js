@@ -2,8 +2,8 @@ export const bottomUpMergeSort = (array) => {
     const steps = [];
     const arr = [...array];
     const n = arr.length;
+    let iterNum = 0;
 
-    // Start with n individual segments
     let segments = Array.from({ length: n }, (_, i) => [i, i + 1]);
 
     const snap = () => segments.map(s => [s[0], s[1]]);
@@ -17,6 +17,9 @@ export const bottomUpMergeSort = (array) => {
     };
 
     for (let size = 1; size < n; size *= 2) {
+        iterNum++;
+        const iteration = iterNum;
+
         steps.push({
             action: 'pass_start',
             description: `Pass: merging sub-arrays of size ${size}`,
@@ -25,6 +28,7 @@ export const bottomUpMergeSort = (array) => {
             segments: snap(),
             leftRange: null,
             rightRange: null,
+            iteration,
         });
 
         for (let leftStart = 0; leftStart < n; leftStart += 2 * size) {
@@ -43,6 +47,7 @@ export const bottomUpMergeSort = (array) => {
                 segments: snap(),
                 leftRange: [leftStart, mid],
                 rightRange: [mid, rightEnd],
+                iteration,
             });
 
             let i = 0, j = 0, k = leftStart;
@@ -56,6 +61,7 @@ export const bottomUpMergeSort = (array) => {
                     segments: snap(),
                     leftRange: [leftStart, mid],
                     rightRange: [mid, rightEnd],
+                    iteration,
                 });
 
                 if (left[i] <= right[j]) {
@@ -72,6 +78,7 @@ export const bottomUpMergeSort = (array) => {
                     segments: snap(),
                     leftRange: [leftStart, mid],
                     rightRange: [mid, rightEnd],
+                    iteration,
                 });
             }
 
@@ -85,6 +92,7 @@ export const bottomUpMergeSort = (array) => {
                     segments: snap(),
                     leftRange: [leftStart, mid],
                     rightRange: [mid, rightEnd],
+                    iteration,
                 });
             }
 
@@ -98,6 +106,7 @@ export const bottomUpMergeSort = (array) => {
                     segments: snap(),
                     leftRange: [leftStart, mid],
                     rightRange: [mid, rightEnd],
+                    iteration,
                 });
             }
 
@@ -112,6 +121,7 @@ export const bottomUpMergeSort = (array) => {
                 activeRange: [leftStart, rightEnd],
                 leftRange: null,
                 rightRange: null,
+                iteration,
             });
         }
     }

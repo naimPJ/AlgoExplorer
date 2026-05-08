@@ -1,74 +1,102 @@
 export const countingSort = (array) => {
-    const steps = [];
-    const sortedArray = [...array];
+    if (array.length === 0) return { steps: [], sortedArray: [] };
 
-    // Finding min and max values
+    const steps = [];
+    const original = [...array];
+    const sortedArray = [...array];
     const min = Math.min(...array);
     const max = Math.max(...array);
     const range = max - min + 1;
+    const count = new Array(range).fill(0);
+    const output = new Array(sortedArray.length).fill(null);
 
+    // Phase 1 — count occurrences
     steps.push({
         indices: [],
         action: "info",
-        description: `Found number range: from ${min} to ${max}`
+        description: `Range: ${min} to ${max} (${range} buckets)`,
+        iteration: 1,
+        array: original,
+        bins: [...count],
+        binMin: min,
+        activeBin: null,
+        output: [...output],
+        outputActive: null,
     });
 
-    // Creating counting array
-    const count = new Array(range).fill(0);
-
-    // Counting occurrences of each element
-    for (let i = 0; i < sortedArray.length; i++) {
-        const num = sortedArray[i];
+    for (let i = 0; i < original.length; i++) {
+        const num = original[i];
         count[num - min]++;
-        
         steps.push({
             indices: [i],
             action: "compare",
-            description: `Counting element ${num} (currently appeared ${count[num - min]} time(s))`
+            description: `Element ${num} → bucket ${num}: count is now ${count[num - min]}`,
+            iteration: 1,
+            array: original,
+            bins: [...count],
+            binMin: min,
+            activeBin: num - min,
+            output: [...output],
+            outputActive: null,
         });
     }
 
-    // Modifying counting array to contain actual positions
+    // Phase 2 — prefix sums
     for (let i = 1; i < count.length; i++) {
         count[i] += count[i - 1];
         steps.push({
             indices: [],
             action: "info",
-            description: `Calculating cumulative sum for number ${i + min}`
+            description: `Prefix sum for ${i + min}: ${count[i - 1] - (count[i] - count[i - 1])} + ${count[i] - count[i - 1]} = ${count[i]}`,
+            iteration: 2,
+            array: original,
+            bins: [...count],
+            binMin: min,
+            activeBin: i,
+            output: [...output],
+            outputActive: null,
         });
     }
 
-    // Creating auxiliary array for sorting
-    const output = new Array(sortedArray.length);
-
-    // Building sorted array
-    for (let i = sortedArray.length - 1; i >= 0; i--) {
-        const num = sortedArray[i];
+    // Phase 3 — place elements (right to left for stability)
+    for (let i = original.length - 1; i >= 0; i--) {
+        const num = original[i];
         const pos = count[num - min] - 1;
         output[pos] = num;
         count[num - min]--;
-
-        steps.push({
-            indices: [i, pos],
-            action: "write",
-            description: `Placing number ${num} at position ${pos}`
-        });
-    }
-
-    // Copying sorted array back to original array
-    for (let i = 0; i < sortedArray.length; i++) {
-        sortedArray[i] = output[i];
         steps.push({
             indices: [i],
-            action: "fixed",
-            description: `Element ${output[i]} is in its final position`
+            action: "write",
+            description: `Place ${num} (pos ${i}) → output[${pos}]`,
+            iteration: 3,
+            array: original,
+            bins: [...count],
+            binMin: min,
+            activeBin: num - min,
+            output: [...output],
+            outputActive: pos,
         });
     }
 
-    return {
-        steps,
-        sortedArray
-    };
+    // Final — copy back
+    for (let i = 0; i < sortedArray.length; i++) {
+        sortedArray[i] = output[i];
+    }
+
+    steps.push({
+        indices: [],
+        action: "fixed",
+        description: "Array sorted",
+        iteration: 3,
+        array: [...sortedArray],
+        bins: [...count],
+        binMin: min,
+        activeBin: null,
+        output: [...output],
+        outputActive: null,
+    });
+
+    return { steps, sortedArray };
 };
 
 export const countingSortInfo = {
@@ -80,4 +108,4 @@ export const countingSortInfo = {
     },
     spaceComplexity: "O(k)",
     description: "Counting Sort is a non-comparative sorting algorithm that works by counting the number of objects having distinct key values, and using arithmetic to determine the positions of each key value in the output sequence."
-}; 
+};

@@ -25,3 +25,6 @@ yarn-error.log*
 # backend
 server/node_modules
 server/.env
+
+# claude
+CLAUDE.md

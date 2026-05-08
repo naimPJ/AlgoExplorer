@@ -1,8 +1,8 @@
 export const mergeSort = (array) => {
     const steps = [];
     const arr = [...array];
+    let iterNum = 0;
 
-    // Live partition state: list of [start, end) pairs
     let segments = [[0, arr.length]];
 
     const snap = () => segments.map(s => [s[0], s[1]]).sort((a, b) => a[0] - b[0]);
@@ -20,6 +20,8 @@ export const mergeSort = (array) => {
     };
 
     const mergeParts = (left, right, start, end) => {
+        iterNum++;
+        const iteration = iterNum;
         const mid = start + left.length;
 
         steps.push({
@@ -30,6 +32,7 @@ export const mergeSort = (array) => {
             segments: snap(),
             leftRange: [start, mid],
             rightRange: [mid, end],
+            iteration,
         });
 
         const merged = [];
@@ -44,6 +47,7 @@ export const mergeSort = (array) => {
                 segments: snap(),
                 leftRange: [start, mid],
                 rightRange: [mid, end],
+                iteration,
             });
             if (left[i] <= right[j]) merged.push(left[i++]);
             else merged.push(right[j++]);
@@ -61,6 +65,7 @@ export const mergeSort = (array) => {
                 segments: snap(),
                 leftRange: [start, mid],
                 rightRange: [mid, end],
+                iteration,
             });
         }
 
@@ -75,6 +80,7 @@ export const mergeSort = (array) => {
             activeRange: [start, end],
             leftRange: null,
             rightRange: null,
+            iteration,
         });
 
         return merged;
@@ -95,6 +101,7 @@ export const mergeSort = (array) => {
             segments: snap(),
             leftRange: [start, mid],
             rightRange: [mid, end],
+            iteration: iterNum,
         });
 
         const left = sort(start, mid);

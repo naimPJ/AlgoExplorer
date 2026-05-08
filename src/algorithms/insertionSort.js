@@ -3,29 +3,33 @@ export const insertionSort = (array) => {
     const sortedArray = [...array];
 
     for (let i = 1; i < sortedArray.length; i++) {
+        const iteration = i;
         const key = sortedArray[i];
         let j = i - 1;
 
         steps.push({
             indices: [i],
             action: "compare",
-            description: `Taking element ${key} for insertion into sorted portion`
+            description: `Taking element ${key} for insertion into sorted portion`,
+            iteration,
         });
 
         while (j >= 0 && sortedArray[j] > key) {
             steps.push({
                 indices: [j, j + 1],
                 action: "compare",
-                description: `Comparing elements ${sortedArray[j]} and ${key}`
+                description: `Comparing elements ${sortedArray[j]} and ${key}`,
+                iteration,
             });
 
             sortedArray[j + 1] = sortedArray[j];
             steps.push({
                 indices: [j, j + 1],
                 action: "swap",
-                description: `Moving element ${sortedArray[j]} to the right`
+                description: `Moving element ${sortedArray[j]} to the right`,
+                iteration,
             });
-            
+
             j--;
         }
 
@@ -34,21 +38,20 @@ export const insertionSort = (array) => {
             steps.push({
                 indices: [j + 1],
                 action: "write",
-                description: `Placing element ${key} at position ${j + 1}`
+                description: `Placing element ${key} at position ${j + 1}`,
+                iteration,
             });
         }
 
         steps.push({
-            indices: Array.from({length: i + 1}, (_, idx) => idx),
+            indices: Array.from({ length: i + 1 }, (_, idx) => idx),
             action: "fixed",
-            description: `Array portion up to position ${i} is sorted`
+            description: `Array portion up to position ${i} is sorted`,
+            iteration,
         });
     }
 
-    return {
-        steps,
-        sortedArray
-    };
+    return { steps, sortedArray };
 };
 
 export const insertionSortInfo = {
@@ -60,4 +63,4 @@ export const insertionSortInfo = {
     },
     spaceComplexity: "O(1)",
     description: "Insertion Sort is a sorting algorithm that builds the final sorted array one item at a time. It takes one element from the input data in each iteration and finds its correct position in the already sorted portion of the array."
-}; 
+};

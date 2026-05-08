@@ -49,6 +49,7 @@ const TreePage = () => {
     const [listInput,   setListInput]   = useState('');
     const [speed,       setSpeed]       = useState(1);
     const [traversalResult, setTraversalResult] = useState(null);
+    const [selectedNode,   setSelectedNode]   = useState(null);
     const [canvasWidth, setCanvasWidth] = useState(0);
     const canvasRef = useRef(null);
     const opContextsRef   = useRef([]);
@@ -98,11 +99,13 @@ const TreePage = () => {
             treeBefore: tree,
             finalTree: result.tree,
         });
+        setLog([]);
         setSteps(result.steps);
         setPendingTree(result.tree);
         setStepIdx(0);
         setIsPlaying(true);
         setTraversalResult(null);
+        setSelectedNode(null);
     }, [tree]);
 
     const getInput = () => {
@@ -190,6 +193,12 @@ const TreePage = () => {
         setTraversalResult(null);
     };
 
+    const handleNodeClick = (value) => {
+        if (isPlaying) return;
+        setInputValue(String(value));
+        setSelectedNode(prev => prev === value ? null : value);
+    };
+
     const handlePause = () => setIsPlaying(false);
 
     const handleReset = () => {
@@ -203,6 +212,7 @@ const TreePage = () => {
         setLog([]);
         setTraversalResult(null);
         setInputValue('');
+        setSelectedNode(null);
     };
 
     const currentStep = steps[stepIdx] ?? null;
@@ -310,6 +320,8 @@ const TreePage = () => {
                         tree={tree}
                         step={currentStep}
                         width={canvasWidth}
+                        onNodeClick={handleNodeClick}
+                        selectedNode={selectedNode}
                     />
                 </div>
 

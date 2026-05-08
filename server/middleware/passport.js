@@ -12,7 +12,7 @@ passport.use(new GoogleStrategy(
     async (_accessToken, _refreshToken, profile, done) => {
         try {
             const email    = profile.emails[0].value;
-            const username = profile.displayName.replace(/\s+/g, "").toLowerCase();
+            const username = profile.displayName;
 
             const [rows] = await db.query("SELECT * FROM users WHERE email = ? LIMIT 1", [email]);
 
