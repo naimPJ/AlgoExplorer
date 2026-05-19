@@ -3,7 +3,8 @@
     display: grid;
     grid-template-columns: 280px 1fr;
     grid-template-rows: auto auto;
-    gap: 20px;
+    column-gap: 20px;
+    row-gap: 8px;
     padding: 28px 32px 32px;
     background: transparent;
     min-height: calc(100vh - 60px);

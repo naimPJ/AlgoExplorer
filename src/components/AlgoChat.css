@@ -1,0 +1,324 @@
+/* ── Wrapper — positions the toggle + panel together ─────────────────────── */
+.algochat-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+    padding: 16px 16px 16px 0;
+}
+
+/* ── Nudge toast ──────────────────────────────────────────────────────────── */
+.algochat-toast {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #1e2a45;
+    color: #e8edf8;
+    font-size: 13px;
+    font-family: Inter, sans-serif;
+    line-height: 1.45;
+    padding: 13px 15px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    width: 230px;
+    margin-bottom: 10px;
+    animation: algochat-toast-in 0.25s ease;
+}
+
+@keyframes algochat-toast-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0);   }
+}
+
+.algochat-toast-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.algochat-toast-open {
+    flex: 1;
+    background: #3b5bdb;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 6px 0;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: Inter, sans-serif;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.algochat-toast-open:hover { background: #2f4ac7; }
+
+.algochat-toast-dismiss {
+    background: rgba(255,255,255,0.08);
+    color: #94a3b8;
+    border: none;
+    border-radius: 7px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-family: Inter, sans-serif;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.algochat-toast-dismiss:hover { background: rgba(255,255,255,0.14); }
+
+/* ── Toggle button ────────────────────────────────────────────────────────── */
+.algochat-toggle {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 18px 10px 14px;
+    background: #3b5bdb;
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: Inter, sans-serif;
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+    white-space: nowrap;
+    align-self: flex-end;
+    margin-bottom: 8px;
+    box-shadow: 0 4px 14px rgba(59, 91, 219, 0.35);
+}
+
+.algochat-toggle:hover {
+    background: #2f4ac7;
+    box-shadow: 0 6px 18px rgba(59, 91, 219, 0.45);
+    transform: translateY(-1px);
+}
+
+.algochat-toggle:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(59, 91, 219, 0.3);
+}
+
+.algochat-toggle-label {
+    line-height: 1;
+}
+
+/* ── Panel ────────────────────────────────────────────────────────────────── */
+.algochat-panel {
+    width: 320px;
+    height: 520px;
+    background: #fff;
+    border: 1px solid #e5e9f2;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.algochat-wrap--open .algochat-panel {
+    display: flex;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+.algochat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #f1f3f9;
+    flex-shrink: 0;
+}
+
+.algochat-header-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: Inter, sans-serif;
+    color: #1e2a45;
+}
+
+.algochat-header-title svg {
+    color: #3b5bdb;
+}
+
+.algochat-header-close {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    transition: color 0.1s, background 0.1s;
+}
+
+.algochat-header-close:hover {
+    color: #475569;
+    background: #f1f5f9;
+}
+
+/* ── Messages area ────────────────────────────────────────────────────────── */
+.algochat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 14px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ── Empty state ──────────────────────────────────────────────────────────── */
+.algochat-empty {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 8px;
+}
+
+.algochat-empty p {
+    font-size: 13px;
+    color: #64748b;
+    font-family: Inter, sans-serif;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.algochat-suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.algochat-suggestion {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 11px;
+    font-size: 12px;
+    font-family: Inter, sans-serif;
+    color: #475569;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.1s, border-color 0.1s;
+}
+
+.algochat-suggestion:hover {
+    background: #f0f4ff;
+    border-color: #c7d5fb;
+    color: #3b5bdb;
+}
+
+/* ── Individual messages ──────────────────────────────────────────────────── */
+.algochat-msg {
+    display: flex;
+}
+
+.algochat-msg--user {
+    justify-content: flex-end;
+}
+
+.algochat-msg--assistant {
+    justify-content: flex-start;
+}
+
+.algochat-msg-bubble {
+    max-width: 88%;
+    padding: 9px 13px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-family: Inter, sans-serif;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.algochat-msg--user .algochat-msg-bubble {
+    background: #3b5bdb;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+.algochat-msg--assistant .algochat-msg-bubble {
+    background: #f8fafc;
+    color: #1e2a45;
+    border: 1px solid #e8ecf4;
+    border-bottom-left-radius: 4px;
+}
+
+/* ── Input row ────────────────────────────────────────────────────────────── */
+.algochat-input-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 10px 12px 12px;
+    border-top: 1px solid #f1f3f9;
+    flex-shrink: 0;
+}
+
+.algochat-input {
+    flex: 1;
+    resize: none;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 9px 11px;
+    font-size: 13px;
+    font-family: Inter, sans-serif;
+    color: #1e2a45;
+    background: #f8fafc;
+    outline: none;
+    max-height: 100px;
+    overflow-y: auto;
+    transition: border-color 0.15s;
+    line-height: 1.4;
+}
+
+.algochat-input:focus {
+    border-color: #93a8f5;
+    background: #fff;
+}
+
+.algochat-input:disabled {
+    opacity: 0.6;
+}
+
+.algochat-send {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    background: #3b5bdb;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+}
+
+.algochat-send:hover:not(:disabled) {
+    background: #2f4ac7;
+}
+
+.algochat-send:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+/* ── Streaming spinner ────────────────────────────────────────────────────── */
+.algochat-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: algochat-spin 0.7s linear infinite;
+    display: block;
+}
+
+@keyframes algochat-spin {
+    to { transform: rotate(360deg); }
+}

@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import TreeCanvas from "../components/TreeCanvas";
 import * as bst from "../algorithms/bst";
+import AlgoChat from "../components/AlgoChat";
 import "./TreePage.css";
 
 const SPEED_MS = { 0.5: 1200, 1: 700, 2: 350, 3: 180 };
@@ -218,7 +219,16 @@ const TreePage = () => {
     const currentStep = steps[stepIdx] ?? null;
     const noTree = !tree && !currentStep?.treeAfter;
 
+    const chatContext = useMemo(() => ({
+        algorithm:   'Binary Search Tree',
+        stepIndex:   stepIdx,
+        totalSteps:  steps.length,
+        currentStep: currentStep ? { action: currentStep.action, description: currentStep.description } : null,
+        recentSteps: log.slice(0, 8).map(e => e.description),
+    }), [stepIdx, steps.length, currentStep, log]);
+
     return (
+        <div className="tree-page-wrap">
         <div className="tree-page">
 
             {/* ── Controls ───────────────────────────────────────── */}
@@ -344,6 +354,8 @@ const TreePage = () => {
                 </div>
             </div>
 
+        </div>
+        <AlgoChat context={chatContext} isRunning={stepIdx > 0} />
         </div>
     );
 };

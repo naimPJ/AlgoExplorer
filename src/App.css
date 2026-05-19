@@ -16,6 +16,20 @@ main {
     flex-direction: column;
 }
 
+.viz-chat-layout {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0;
+    flex: 1;
+    min-width: 0;
+}
+
+.viz-chat-layout .visualization-wrapper {
+    flex: 1;
+    min-width: 0;
+}
+
 /* ── Array input bar ────────────────────────────────────────── */
 .array-input-bar {
     padding: 16px 32px 0;

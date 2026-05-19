@@ -1,8 +1,18 @@
 /* TreePage.css */
+.tree-page-wrap {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    height: calc(100vh - 60px);
+    overflow: hidden;
+}
+
 .tree-page {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 60px);
+    flex: 1;
+    min-width: 0;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -199,7 +209,7 @@
     overflow: auto;
     background: #f8fafc;
     border-right: 1px solid #e5e9f2;
-    padding: 8px 0;
+    padding: 0;
 }
 
 /* ── Log ──────────────────────────────────────────────────────── */

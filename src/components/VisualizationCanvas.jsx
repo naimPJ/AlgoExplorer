@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import * as d3 from "d3";
 import "./VisualizationCanvas.css";
 import MergeCanvas from "./MergeCanvas";
 import CountingCanvas from "./CountingCanvas";
+import AlgoChat from "./AlgoChat";
 
 const MERGE_ALGORITHMS    = new Set(['mergeSort', 'bottomUpMergeSort']);
 const SNAPSHOT_ALGORITHMS = new Set(['mergeSort', 'bottomUpMergeSort', 'countingSort']);
@@ -61,6 +62,17 @@ const VisualizationCanvas = ({ array, algorithm }) => {
     const [algorithmInfo, setAlgorithmInfo] = useState(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
     const [log, setLog] = useState([]);
+
+    // Chat context — snapshot of current execution state for the AI
+    const chatContext = useMemo(() => ({
+        algorithm:      algorithmInfo?.name ?? algorithm,
+        timeComplexity: algorithmInfo?.timeComplexity,
+        stepIndex,
+        totalSteps:     steps.length,
+        currentStep:    steps[stepIndex] ?? null,
+        recentSteps:    log.slice(0, 8).map(e => e.description),
+        array:          currentArray,
+    }), [algorithmInfo, algorithm, stepIndex, steps, log, currentArray]);
 
     // Inicijalizacija algoritma
     useEffect(() => {
@@ -268,6 +280,7 @@ const VisualizationCanvas = ({ array, algorithm }) => {
     };
 
     return (
+        <div className="viz-chat-layout">
         <div className="visualization-wrapper">
             {/* Algorithm Info */}
             <div className="algorithm-info">
@@ -380,7 +393,9 @@ const VisualizationCanvas = ({ array, algorithm }) => {
                 </div>
             </div>
         </div>
+        <AlgoChat context={chatContext} isRunning={stepIndex > 0} />
+        </div>
     );
 };
 
-export default VisualizationCanvas; 
+export default VisualizationCanvas;
