@@ -5,10 +5,10 @@ const router = express.Router();
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 function buildSystemPrompt(context) {
-    const { algorithm, timeComplexity, stepIndex, totalSteps, currentStep, recentSteps, array } = context;
+    const { algorithm, timeComplexity, stepIndex, totalSteps, currentStep, executionLog, array } = context;
 
     const lines = [
-        "You are an algorithm tutor embedded in AlgoExplorer, an interactive algorithm visualizer.",
+        "You are an algorithm tutor embedded in AlgoExplorer called, an interactive algorithm visualizer.",
         "Your job is to help students understand what is happening during a live algorithm execution.",
         "Keep answers short (2–4 sentences), concrete, and tied to the current execution state.",
         "Never just recite theory — always connect your answer to the specific step the user is on.",
@@ -31,12 +31,21 @@ function buildSystemPrompt(context) {
         }
     }
 
-    if (recentSteps?.length) {
-        lines.push(`Recent steps: ${recentSteps.join(" → ")}`);
+    if (executionLog?.length) {
+        // Log is newest-first from the client; reverse so the LLM reads it chronologically.
+        const chronological = [...executionLog].reverse();
+        lines.push("");
+        lines.push(`Execution log so far (${chronological.length} steps, oldest → newest):`);
+        for (const entry of chronological) {
+            const iter = entry.iteration != null ? `[iter ${entry.iteration}] ` : "";
+            lines.push(`- ${iter}${entry.action}: ${entry.description}`);
+        }
     }
 
     if (array?.length) {
         lines.push(`Current array: [${array.join(", ")}]`);
+    } else {
+        lines.push("No array has been entered yet. Do not invent or assume any elements.");
     }
 
     return lines.join("\n");

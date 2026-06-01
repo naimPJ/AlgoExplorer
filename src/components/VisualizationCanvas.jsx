@@ -70,7 +70,11 @@ const VisualizationCanvas = ({ array, algorithm }) => {
         stepIndex,
         totalSteps:     steps.length,
         currentStep:    steps[stepIndex] ?? null,
-        recentSteps:    log.slice(0, 8).map(e => e.description),
+        executionLog:   log.map(e => ({
+            iteration:   e.iteration,
+            action:      e.action,
+            description: e.description,
+        })),
         array:          currentArray,
     }), [algorithmInfo, algorithm, stepIndex, steps, log, currentArray]);
 
