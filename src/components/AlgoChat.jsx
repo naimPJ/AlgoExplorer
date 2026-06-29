@@ -10,35 +10,28 @@ const ChatMessage = ({ msg }) => (
     </div>
 );
 
-const AlgoChat = ({ context, isRunning, onOpenAuth }) => {
+const AlgoChat = ({ context, onOpenAuth }) => {
     const { user, getToken } = useAuth();
-    const [isOpen,     setIsOpen]     = useState(false);
+    const [collapsed,  setCollapsed]  = useState(() => localStorage.getItem("ae_tutor_collapsed") === "1");
     const [messages,   setMessages]   = useState([]);
     const [input,      setInput]      = useState("");
     const [streaming,  setStreaming]  = useState(false);
-    const [showToast,  setShowToast]  = useState(false);
     const [quizMode,   setQuizMode]   = useState(false);
     const bottomRef   = useRef(null);
     const inputRef    = useRef(null);
     const abortRef    = useRef(null);
-    const hasToastedRef = useRef(false);
 
     useEffect(() => {
-        if (isRunning && !hasToastedRef.current && !isOpen) {
-            hasToastedRef.current = true;
-            setShowToast(true);
-            const t = setTimeout(() => setShowToast(false), 5000);
-            return () => clearTimeout(t);
-        }
-    }, [isRunning]);
+        localStorage.setItem("ae_tutor_collapsed", collapsed ? "1" : "0");
+    }, [collapsed]);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
     useEffect(() => {
-        if (isOpen) inputRef.current?.focus();
-    }, [isOpen]);
+        if (!collapsed) inputRef.current?.focus();
+    }, [collapsed]);
 
     const send = async () => {
         const question = input.trim();
@@ -132,39 +125,21 @@ const AlgoChat = ({ context, isRunning, onOpenAuth }) => {
     };
 
     return (
-        <div className={`algochat-wrap ${isOpen ? "algochat-wrap--open" : ""}`}>
-            {/* Nudge toast */}
-            {showToast && !isOpen && (
-                <div className="algochat-toast">
-                    <span>Need help understanding this? Ask AI</span>
-                    <div className="algochat-toast-actions">
-                        <button className="algochat-toast-open" onClick={() => { setIsOpen(true); setShowToast(false); }}>
-                            Open chat
-                        </button>
-                        <button className="algochat-toast-dismiss" onClick={() => setShowToast(false)}>
-                            Got it
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* Toggle button */}
+        <div className={`algochat-dock ${collapsed ? "algochat-dock--collapsed" : ""}`}>
+            {/* Collapsed rail */}
             <button
-                className="algochat-toggle"
-                onClick={() => setIsOpen(o => !o)}
-                title={isOpen ? "Close chat" : "Ask about this algorithm"}
+                className="algochat-rail"
+                onClick={() => setCollapsed(false)}
+                title="Open Algorithm Tutor"
             >
-                {isOpen ? (
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
-                ) : (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
-                              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                )}
-                {!isOpen && <span className="algochat-toggle-label">Ask AI</span>}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
+                          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span className="algochat-rail-label">AI Tutor</span>
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M10 4L6 8l4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
             </button>
 
             {/* Panel */}
@@ -187,9 +162,13 @@ const AlgoChat = ({ context, isRunning, onOpenAuth }) => {
                                 {quizMode ? "Free Q&A" : "Quiz me"}
                             </button>
                         )}
-                        <button className="algochat-header-close" onClick={() => setIsOpen(false)}>
-                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                                <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        <button
+                            className="algochat-header-close"
+                            onClick={() => setCollapsed(true)}
+                            title="Collapse tutor"
+                        >
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
                         </button>
                     </div>
@@ -253,7 +232,7 @@ const AlgoChat = ({ context, isRunning, onOpenAuth }) => {
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                         </svg>
                         <p className="algochat-locked-text">Sign in to use the AI Tutor</p>
-                        <button className="algochat-locked-btn" onClick={() => { setIsOpen(false); onOpenAuth?.(); }}>
+                        <button className="algochat-locked-btn" onClick={() => onOpenAuth?.()}>
                             Sign in
                         </button>
                     </div>

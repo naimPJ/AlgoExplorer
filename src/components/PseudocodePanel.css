@@ -1,28 +1,22 @@
+/* Sits flush inside the tabbed reference panel (.ref-panel) */
 .pseudocode-panel {
-    background: #ffffff;
-    border: 1px solid #e5e9f2;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    background: transparent;
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
 }
 
-.pseudocode-header {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: #9ca3af;
-    padding: 10px 16px;
-    border-bottom: 1px solid #f0f2f7;
-    font-family: Inter, sans-serif;
-}
+.pseudocode-panel::-webkit-scrollbar { width: 6px; }
+.pseudocode-panel::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
 
 .pseudocode-body {
     margin: 0;
-    padding: 10px 0;
-    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    padding: 12px 0;
+    font-family: 'Courier New', monospace;
     font-size: 13px;
-    line-height: 1.6;
+    line-height: 1.7;
     display: flex;
     flex-direction: column;
     overflow-x: auto;
@@ -30,16 +24,16 @@
 
 .pseudocode-line {
     display: block;
-    padding: 2px 16px;
-    color: #374151;
+    padding: 3px 16px;
+    color: var(--text);
     white-space: pre;
     border-left: 3px solid transparent;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
 .pseudocode-line--active {
-    background: #eff6ff;
-    color: #1d4ed8;
-    border-left-color: #3b82f6;
+    background: var(--brand-tint);
+    color: var(--brand-hover);
+    border-left-color: var(--brand-bright);
     font-weight: 600;
 }

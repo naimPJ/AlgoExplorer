@@ -6,7 +6,6 @@ const PseudocodePanel = ({ pseudocode, activeLine }) => {
 
     return (
         <div className="pseudocode-panel">
-            <div className="pseudocode-header">Pseudocode</div>
             <pre className="pseudocode-body">
                 {pseudocode.map((line, i) => (
                     <span

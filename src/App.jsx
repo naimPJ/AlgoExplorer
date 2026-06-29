@@ -80,6 +80,7 @@ const AppInner = () => {
                 ) : (
                     <div className="viz-view">
                         <div className="array-input-bar">
+                            <span className="array-setup-label">Setup</span>
                             <input
                                 type="text"
                                 placeholder="Enter numbers separated by commas, e.g. 5, 3, 8, 1, 9"
