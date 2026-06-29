@@ -1,122 +1,72 @@
-/* ── Wrapper — positions the toggle + panel together ─────────────────────── */
-.algochat-wrap {
-    position: relative;
+/* ── Docked column ────────────────────────────────────────────────────────── */
+.algochat-dock {
+    position: sticky;
+    top: 76px;
+    align-self: flex-start;
+    flex-shrink: 0;
+    width: 340px;
+    height: calc(100vh - 96px);
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    flex-shrink: 0;
     padding: 16px 16px 16px 0;
 }
 
-/* ── Nudge toast ──────────────────────────────────────────────────────────── */
-.algochat-toast {
-    display: flex;
+.algochat-dock--collapsed {
+    width: 52px;
+}
+
+/* ── Collapsed rail ───────────────────────────────────────────────────────── */
+.algochat-rail {
+    display: none;
     flex-direction: column;
-    gap: 10px;
-    background: #1e2a45;
-    color: #e8edf8;
-    font-size: 13px;
-    font-family: Inter, sans-serif;
-    line-height: 1.45;
-    padding: 13px 15px;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-    width: 230px;
-    margin-bottom: 10px;
-    animation: algochat-toast-in 0.25s ease;
-}
-
-@keyframes algochat-toast-in {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0);   }
-}
-
-.algochat-toast-actions {
-    display: flex;
-    gap: 8px;
-}
-
-.algochat-toast-open {
-    flex: 1;
-    background: #3b5bdb;
-    color: #fff;
-    border: none;
-    border-radius: 7px;
-    padding: 6px 0;
-    font-size: 12px;
-    font-weight: 600;
-    font-family: Inter, sans-serif;
-    cursor: pointer;
-    transition: background 0.15s;
-}
-
-.algochat-toast-open:hover { background: #2f4ac7; }
-
-.algochat-toast-dismiss {
-    background: rgba(255,255,255,0.08);
-    color: #94a3b8;
-    border: none;
-    border-radius: 7px;
-    padding: 6px 10px;
-    font-size: 12px;
-    font-family: Inter, sans-serif;
-    cursor: pointer;
-    transition: background 0.15s;
-}
-
-.algochat-toast-dismiss:hover { background: rgba(255,255,255,0.14); }
-
-/* ── Toggle button ────────────────────────────────────────────────────────── */
-.algochat-toggle {
-    display: flex;
     align-items: center;
-    gap: 7px;
-    padding: 10px 18px 10px 14px;
-    background: #3b5bdb;
-    border: none;
-    border-radius: 10px;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 700;
-    font-family: Inter, sans-serif;
+    gap: 12px;
+    flex: 1;
+    width: 100%;
+    padding: 16px 0;
+    background: #fff;
+    border: 1px solid #e5e9f2;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    color: #3b5bdb;
     cursor: pointer;
-    transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
-    white-space: nowrap;
-    align-self: flex-end;
-    margin-bottom: 8px;
-    box-shadow: 0 4px 14px rgba(59, 91, 219, 0.35);
+    transition: background 0.15s, border-color 0.15s;
 }
 
-.algochat-toggle:hover {
-    background: #2f4ac7;
-    box-shadow: 0 6px 18px rgba(59, 91, 219, 0.45);
-    transform: translateY(-1px);
+.algochat-rail:hover {
+    background: #f6f8ff;
+    border-color: #c7d5fb;
 }
 
-.algochat-toggle:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(59, 91, 219, 0.3);
+.algochat-rail-label {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    font-family: Inter, sans-serif;
+    color: #1e2a45;
 }
 
-.algochat-toggle-label {
-    line-height: 1;
+.algochat-dock--collapsed .algochat-rail {
+    display: flex;
 }
 
 /* ── Panel ────────────────────────────────────────────────────────────────── */
 .algochat-panel {
-    width: 320px;
-    height: 520px;
+    width: 100%;
+    height: 100%;
     background: #fff;
     border: 1px solid #e5e9f2;
     border-radius: 14px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.10);
-    display: none;
+    display: flex;
     flex-direction: column;
     overflow: hidden;
 }
 
-.algochat-wrap--open .algochat-panel {
-    display: flex;
+.algochat-dock--collapsed .algochat-panel {
+    display: none;
 }
 
 /* ── Header ───────────────────────────────────────────────────────────────── */

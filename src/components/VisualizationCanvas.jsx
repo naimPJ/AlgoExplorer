@@ -24,13 +24,15 @@ import { bottomUpMergeSort, bottomUpMergeSortInfo } from "../algorithms/bottomUp
 const ANIMATION_SPEED = 700;
 const TRANSITION_DURATION = 300;
 
+// Unified semantic-action palette — kept in sync with the --act-* CSS tokens
+// so bars, metrics, and log badges all read the same hue per action.
 const BAR_COLORS = {
     default: "#3b82f6",
-    comparing: "#f59e0b",
-    swapping: "#ef4444",
-    fixed: "#10b981",
-    pivot: "#8b5cf6",
-    writing: "#f97316"
+    compare: "#f59e0b",
+    swap:    "#ef4444",
+    write:   "#f97316",
+    fixed:   "#10b981",
+    pivot:   "#8b5cf6"
 };
 
 // Mapa algoritama
@@ -63,6 +65,11 @@ const VisualizationCanvas = ({ array, algorithm, onOpenAuth }) => {
     const [algorithmInfo, setAlgorithmInfo] = useState(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
     const [log, setLog] = useState([]);
+    const [activeTab, setActiveTab] = useState(() => localStorage.getItem("ae_viz_tab") || "code");
+
+    useEffect(() => {
+        localStorage.setItem("ae_viz_tab", activeTab);
+    }, [activeTab]);
 
     // Chat context — snapshot of current execution state for the AI
     const chatContext = useMemo(() => ({
@@ -145,11 +152,11 @@ const VisualizationCanvas = ({ array, algorithm, onOpenAuth }) => {
         container.append("g")
             .attr("transform", `translate(0,${height})`)
             .call(xAxis)
-            .style("font-size", "12px");
+            .style("font-size", "11px");
 
         container.append("g")
             .call(yAxis)
-            .style("font-size", "12px");
+            .style("font-size", "11px");
 
         // Bars
         const bars = container
@@ -177,7 +184,7 @@ const VisualizationCanvas = ({ array, algorithm, onOpenAuth }) => {
             .attr("x", (d, i) => xScale(i) + xScale.bandwidth() / 2)
             .attr("y", d => yScale(d) - 10)
             .attr("text-anchor", "middle")
-            .attr("font-size", "14px")
+            .attr("font-size", "12px")
             .attr("fill", "#9ca3af")
             .text(d => d);
 
@@ -193,7 +200,7 @@ const VisualizationCanvas = ({ array, algorithm, onOpenAuth }) => {
                     .attr("fill", BAR_COLORS[action])
                     .style("filter", "drop-shadow(0px 4px 4px rgba(0,0,0,0.2))");
 
-                if (action === "comparing" || action === "swapping") {
+                if (action === "compare" || action === "swap") {
                     bar
                         .transition()
                         .duration(TRANSITION_DURATION / 4)
@@ -333,10 +340,15 @@ const VisualizationCanvas = ({ array, algorithm, onOpenAuth }) => {
         setLog(prev => prev.filter(e => e.id < targetIdx));
     };
 
+    const totalSteps = steps.length;
+    const hasPseudo  = !!algorithmInfo?.pseudocode;
+    const tab        = hasPseudo ? activeTab : "log";
+    const progressPct = totalSteps > 0 ? Math.min(100, (stepIndex / totalSteps) * 100) : 0;
+
     return (
         <div className="viz-chat-layout">
         <div className="visualization-wrapper">
-            {/* Algorithm Info */}
+            {/* Left rail — algorithm reference + live metrics */}
             <div className="algorithm-info">
                 {algorithmInfo && (
                     <>
@@ -351,11 +363,33 @@ const VisualizationCanvas = ({ array, algorithm, onOpenAuth }) => {
                             </ul>
                             <p>Space complexity: {algorithmInfo.spaceComplexity}</p>
                         </div>
+
+                        <div className="metrics-block">
+                            <p className="metrics-block-label">Live metrics</p>
+                            <div className="metrics-grid">
+                                <div className="metrics-item metrics-item--compare">
+                                    <span className="metrics-value">{metrics.compare}</span>
+                                    <span className="metrics-label">Comparisons</span>
+                                </div>
+                                <div className="metrics-item metrics-item--swap">
+                                    <span className="metrics-value">{metrics.swap}</span>
+                                    <span className="metrics-label">Swaps</span>
+                                </div>
+                                <div className="metrics-item metrics-item--write">
+                                    <span className="metrics-value">{metrics.write}</span>
+                                    <span className="metrics-label">Writes</span>
+                                </div>
+                                <div className="metrics-item metrics-item--fixed">
+                                    <span className="metrics-value">{metrics.fixed}</span>
+                                    <span className="metrics-label">Sorted</span>
+                                </div>
+                            </div>
+                        </div>
                     </>
                 )}
             </div>
 
-            {/* Visualization Group */}
+            {/* Work area — canvas (focal point) + command bar + code/log */}
             <div className="visualization-group">
                 {/* Visualization Canvas */}
                 <div className="visualization-container" ref={containerRef}>
@@ -377,30 +411,34 @@ const VisualizationCanvas = ({ array, algorithm, onOpenAuth }) => {
                             className="visualization-canvas"
                         />
                     )}
+                    <div className="viz-progress">
+                        <div className="viz-progress-fill" style={{ width: `${progressPct}%` }} />
+                    </div>
                 </div>
 
-                {/* Controls */}
+                {/* Command bar */}
                 <div className="controls">
                     <button
                         onClick={handlePlay}
                         disabled={isPlaying || stepIndex >= steps.length}
-                        className="control-button"
+                        className="control-button control-button--primary"
                     >
-                        Play
+                        ▶ Play
                     </button>
                     <button
                         onClick={handlePause}
                         disabled={!isPlaying}
                         className="control-button"
                     >
-                        Pause
+                        ❚❚ Pause
                     </button>
                     <button
                         onClick={handleReset}
                         className="control-button"
                     >
-                        Reset
+                        ⟲ Reset
                     </button>
+                    <span className="controls-divider" aria-hidden="true" />
                     <button
                         onClick={handleStepBack}
                         disabled={isPlaying || stepIndex <= 0}
@@ -417,8 +455,11 @@ const VisualizationCanvas = ({ array, algorithm, onOpenAuth }) => {
                     >
                         Step →
                     </button>
+                    <span className="controls-progress">
+                        Step <strong>{Math.min(stepIndex, totalSteps)}</strong> / {totalSteps}
+                    </span>
                     <div className="speed-control">
-                        <label>Speed:</label>
+                        <label>Speed</label>
                         <select
                             value={speed}
                             onChange={(e) => handleSpeedChange(e.target.value)}
@@ -431,69 +472,62 @@ const VisualizationCanvas = ({ array, algorithm, onOpenAuth }) => {
                     </div>
                 </div>
 
-                {/* Metrics Panel */}
-                {log.length > 0 && (
-                    <div className="metrics-panel">
-                        <div className="metrics-item metrics-item--compare">
-                            <span className="metrics-value">{metrics.compare}</span>
-                            <span className="metrics-label">Comparisons</span>
-                        </div>
-                        <div className="metrics-item metrics-item--swap">
-                            <span className="metrics-value">{metrics.swap}</span>
-                            <span className="metrics-label">Swaps</span>
-                        </div>
-                        <div className="metrics-item metrics-item--write">
-                            <span className="metrics-value">{metrics.write}</span>
-                            <span className="metrics-label">Writes</span>
-                        </div>
-                        <div className="metrics-item metrics-item--fixed">
-                            <span className="metrics-value">{metrics.fixed}</span>
-                            <span className="metrics-label">Sorted</span>
+                {/* Tabbed reference panel — Pseudocode / Execution Log */}
+                <div className="ref-panel">
+                    <div className="ref-tabs" role="tablist">
+                        {hasPseudo && (
+                            <button
+                                role="tab"
+                                aria-selected={tab === "code"}
+                                className={`ref-tab ${tab === "code" ? "ref-tab--active" : ""}`}
+                                onClick={() => setActiveTab("code")}
+                            >
+                                Pseudocode
+                            </button>
+                        )}
+                        <button
+                            role="tab"
+                            aria-selected={tab === "log"}
+                            className={`ref-tab ${tab === "log" ? "ref-tab--active" : ""}`}
+                            onClick={() => setActiveTab("log")}
+                        >
+                            Execution Log
+                            {log.length > 0 && <span className="ref-tab-count">{log.length}</span>}
+                        </button>
+                        <div className="ref-tabs-meta">
+                            {tab === "log" && log[0]?.iteration != null && (
+                                <span className="execution-log-iteration">Iteration {log[0].iteration}</span>
+                            )}
                         </div>
                     </div>
-                )}
-            </div>
 
-            {/* Pseudocode Panel */}
-            {algorithmInfo?.pseudocode && (
-                <PseudocodePanel
-                    pseudocode={algorithmInfo.pseudocode}
-                    activeLine={steps[stepIndex]?.line ?? null}
-                />
-            )}
-
-            {/* Execution Log */}
-            <div className="execution-log">
-                <div className="execution-log-header">
-                    <span className="execution-log-title">Execution Log</span>
-                    {log.length > 0 && (
-                        <div className="execution-log-counters">
-                            <span className="execution-log-count">{log.length} steps</span>
-                            {log[0]?.iteration != null && (
-                                <span className="execution-log-iteration">Iteration {log[0].iteration}</span>
+                    {tab === "code" && hasPseudo ? (
+                        <PseudocodePanel
+                            pseudocode={algorithmInfo.pseudocode}
+                            activeLine={steps[stepIndex]?.line ?? null}
+                        />
+                    ) : (
+                        <div className="execution-log-entries">
+                            {log.length === 0 ? (
+                                <p className="execution-log-empty">Log will appear here once the algorithm starts.</p>
+                            ) : (
+                                log.map((entry) => (
+                                    <div
+                                        key={entry.id}
+                                        className={`log-entry log-entry--${entry.action} log-entry--clickable`}
+                                        onClick={() => handleLogEntryClick(entry)}
+                                    >
+                                        <span className="log-entry-badge">{entry.action}</span>
+                                        <span className="log-entry-text">{entry.description}</span>
+                                    </div>
+                                ))
                             )}
                         </div>
                     )}
                 </div>
-                <div className="execution-log-entries">
-                    {log.length === 0 ? (
-                        <p className="execution-log-empty">Log will appear here once the algorithm starts.</p>
-                    ) : (
-                        log.map((entry) => (
-                            <div
-                                key={entry.id}
-                                className={`log-entry log-entry--${entry.action} log-entry--clickable`}
-                                onClick={() => handleLogEntryClick(entry)}
-                            >
-                                <span className="log-entry-badge">{entry.action}</span>
-                                <span className="log-entry-text">{entry.description}</span>
-                            </div>
-                        ))
-                    )}
-                </div>
             </div>
         </div>
-        <AlgoChat context={chatContext} isRunning={stepIndex > 0} onOpenAuth={onOpenAuth} />
+        <AlgoChat context={chatContext} onOpenAuth={onOpenAuth} />
         </div>
     );
 };
