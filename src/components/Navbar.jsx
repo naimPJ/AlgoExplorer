@@ -7,7 +7,8 @@ const Navbar = ({ view, algorithmName, onHome, onOpenAuth }) => {
     const { user, logout } = useAuth();
     const inViz  = view === "visualization";
     const inTree = view === "tree";
-    const inSub  = inViz || inTree;
+    const inRace = view === "race";
+    const inSub  = inViz || inTree || inRace;
 
     return (
         <nav className="navbar">
@@ -27,7 +28,7 @@ const Navbar = ({ view, algorithmName, onHome, onOpenAuth }) => {
                     <>
                         <span className="navbar-sep" aria-hidden="true">›</span>
                         <span className="navbar-algo-name">
-                            {inTree ? "Binary Search Tree" : algorithmName}
+                            {inTree ? "Binary Search Tree" : inRace ? "Race Mode" : algorithmName}
                         </span>
                     </>
                 )}

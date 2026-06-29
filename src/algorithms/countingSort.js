@@ -24,6 +24,7 @@ export const countingSort = (array) => {
         activeBin: null,
         output: null,
         outputActive: null,
+        line: 1,
     });
 
     for (let i = 0; i < original.length; i++) {
@@ -41,6 +42,7 @@ export const countingSort = (array) => {
             activeBin: bi,
             output: null,
             outputActive: null,
+            line: 3,
         });
     }
 
@@ -64,6 +66,7 @@ export const countingSort = (array) => {
                 activeBin: bi,
                 output: [...output],
                 outputActive: pos,
+                line: 7,
             });
             pos++;
         }
@@ -85,6 +88,7 @@ export const countingSort = (array) => {
         activeBin: null,
         output: [...output],
         outputActive: null,
+        line: 9,
     });
 
     return { steps, sortedArray };
@@ -98,5 +102,17 @@ export const countingSortInfo = {
         worst: "O(n + k)"
     },
     spaceComplexity: "O(k)",
-    description: "Counting Sort is a non-comparative sorting algorithm that works by counting the number of objects having distinct key values, and using arithmetic to determine the positions of each key value in the output sequence."
+    description: "Counting Sort is a non-comparative sorting algorithm that works by counting the number of objects having distinct key values, and using arithmetic to determine the positions of each key value in the output sequence.",
+    pseudocode: [
+        "count = {} (empty map)",
+        "Phase 1 — count occurrences:",
+        "  for each element in arr:",
+        "    count[element]++",
+        "Phase 2 — drain buckets in order:",
+        "  for each value in sorted(count.keys):",
+        "    while count[value] > 0:",
+        "      write value to output",
+        "      count[value]--",
+        "array is sorted",
+    ],
 };

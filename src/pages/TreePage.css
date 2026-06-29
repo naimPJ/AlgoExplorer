@@ -202,6 +202,7 @@
     display: grid;
     grid-template-columns: 1fr 300px;
     flex: 1;
+    min-height: 0;
     overflow: hidden;
 }
 
@@ -248,11 +249,31 @@
 
 .tree-log-entries {
     flex: 1;
-    overflow-y: auto;
+    min-height: 0;
+    overflow-y: scroll;
     padding: 8px;
     display: flex;
     flex-direction: column;
     gap: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
+}
+
+.tree-log-entries::-webkit-scrollbar {
+    width: 6px;
+}
+
+.tree-log-entries::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tree-log-entries::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+}
+
+.tree-log-entries::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
 }
 
 .tree-log-empty {

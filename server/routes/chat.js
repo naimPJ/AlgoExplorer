@@ -1,14 +1,15 @@
 const express = require("express");
 const Groq = require("groq-sdk");
+const { authenticate } = require("../middleware/auth");
 
 const router = express.Router();
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-function buildSystemPrompt(context) {
-    const { algorithm, timeComplexity, stepIndex, totalSteps, currentStep, executionLog, array } = context;
+function buildSystemPrompt(context, quizMode) {
+    const { algorithm, timeComplexity, stepIndex, totalSteps, currentStep, nextStep, executionLog, array } = context;
 
     const lines = [
-        "You are an algorithm tutor embedded in AlgoExplorer called, an interactive algorithm visualizer.",
+        "You are an algorithm tutor embedded in AlgoExplorer, an interactive algorithm visualizer.",
         "Your job is to help students understand what is happening during a live algorithm execution.",
         "Keep answers short (2–4 sentences), concrete, and tied to the current execution state.",
         "Never just recite theory — always connect your answer to the specific step the user is on.",
@@ -48,11 +49,23 @@ function buildSystemPrompt(context) {
         lines.push("No array has been entered yet. Do not invent or assume any elements.");
     }
 
+    if (quizMode) {
+        lines.push("");
+        lines.push("=== QUIZ MODE ===");
+        lines.push("Do NOT explain what just happened. Instead, ask the student what will happen in the NEXT step.");
+        if (nextStep) {
+            lines.push(`The correct next step is: action="${nextStep.action}", description="${nextStep.description}"`);
+            lines.push("After the student answers, grade it as correct / partially correct / incorrect and give a brief explanation.");
+        } else {
+            lines.push("There is no next step — the algorithm is complete. Ask the student what the final result means or why the algorithm is now done.");
+        }
+    }
+
     return lines.join("\n");
 }
 
-router.post("/", async (req, res) => {
-    const { question, context, history = [] } = req.body;
+router.post("/", authenticate, async (req, res) => {
+    const { question, context, history = [], quizMode = false } = req.body;
 
     if (!question || !context) {
         return res.status(400).json({ error: "question and context are required" });
@@ -65,7 +78,7 @@ router.post("/", async (req, res) => {
 
     try {
         const messages = [
-            { role: "system", content: buildSystemPrompt(context) },
+            { role: "system", content: buildSystemPrompt(context, quizMode) },
             ...history.filter(m => m.content).map(m => ({ role: m.role, content: m.content })),
             { role: "user", content: question },
         ];

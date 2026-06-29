@@ -1,0 +1,45 @@
+.pseudocode-panel {
+    background: #ffffff;
+    border: 1px solid #e5e9f2;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.pseudocode-header {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #9ca3af;
+    padding: 10px 16px;
+    border-bottom: 1px solid #f0f2f7;
+    font-family: Inter, sans-serif;
+}
+
+.pseudocode-body {
+    margin: 0;
+    padding: 10px 0;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
+}
+
+.pseudocode-line {
+    display: block;
+    padding: 2px 16px;
+    color: #374151;
+    white-space: pre;
+    border-left: 3px solid transparent;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.pseudocode-line--active {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-left-color: #3b82f6;
+    font-weight: 600;
+}

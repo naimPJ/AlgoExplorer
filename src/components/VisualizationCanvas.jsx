@@ -4,6 +4,7 @@ import "./VisualizationCanvas.css";
 import MergeCanvas from "./MergeCanvas";
 import CountingCanvas from "./CountingCanvas";
 import AlgoChat from "./AlgoChat";
+import PseudocodePanel from "./PseudocodePanel";
 
 const MERGE_ALGORITHMS    = new Set(['mergeSort', 'bottomUpMergeSort']);
 const SNAPSHOT_ALGORITHMS = new Set(['mergeSort', 'bottomUpMergeSort', 'countingSort']);
@@ -45,7 +46,7 @@ const ALGORITHM_MAP = {
     bottomUpMergeSort: { func: bottomUpMergeSort, info: bottomUpMergeSortInfo }
 };
 
-const VisualizationCanvas = ({ array, algorithm }) => {
+const VisualizationCanvas = ({ array, algorithm, onOpenAuth }) => {
     const isMerge    = MERGE_ALGORITHMS.has(algorithm);
     const isCounting = algorithm === 'countingSort';
     const isSnapshot = SNAPSHOT_ALGORITHMS.has(algorithm);
@@ -70,6 +71,7 @@ const VisualizationCanvas = ({ array, algorithm }) => {
         stepIndex,
         totalSteps:     steps.length,
         currentStep:    steps[stepIndex] ?? null,
+        nextStep:       steps[stepIndex + 1] ?? null,
         executionLog:   log.map(e => ({
             iteration:   e.iteration,
             action:      e.action,
@@ -244,6 +246,13 @@ const VisualizationCanvas = ({ array, algorithm }) => {
         return () => clearTimeout(timeoutId);
     }, [isPlaying, stepIndex, steps, currentArray, speed]);
 
+    // Live operation metrics derived from log
+    const metrics = useMemo(() => {
+        const m = { compare: 0, swap: 0, write: 0, fixed: 0 };
+        log.forEach(e => { if (m[e.action] != null) m[e.action]++; });
+        return m;
+    }, [log]);
+
     // Event handlers
     const handlePlay = () => setIsPlaying(true);
     const handlePause = () => setIsPlaying(false);
@@ -254,6 +263,47 @@ const VisualizationCanvas = ({ array, algorithm }) => {
         setLog([]);
     };
     const handleSpeedChange = (newSpeed) => setSpeed(Number(newSpeed));
+
+    const handleStepForward = () => {
+        if (isPlaying || stepIndex >= steps.length) return;
+        const step = steps[stepIndex];
+        if (!step.array) {
+            if (step.action === "swap") {
+                const [i, j] = step.indices;
+                const newArr = [...currentArray];
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+                setCurrentArray(newArr);
+            } else if (step.action === "write") {
+                const [index] = step.indices;
+                const newArr = [...currentArray];
+                const newValue = parseInt(step.description.match(/\d+/)[0]);
+                newArr[index] = newValue;
+                setCurrentArray(newArr);
+            }
+        }
+        setLog(prev => [{ id: stepIndex, action: step.action, description: step.description, iteration: step.iteration }, ...prev]);
+        setStepIndex(prev => prev + 1);
+    };
+
+    const handleStepBack = () => {
+        if (stepIndex <= 0) return;
+        const targetIdx = stepIndex - 1;
+        const arr = [...array];
+        for (let i = 0; i < targetIdx; i++) {
+            const s = steps[i];
+            if (s.action === "swap") {
+                const [a, b] = s.indices;
+                [arr[a], arr[b]] = [arr[b], arr[a]];
+            } else if (s.action === "write") {
+                const [index] = s.indices;
+                const newValue = parseInt(s.description.match(/\d+/)[0]);
+                arr[index] = newValue;
+            }
+        }
+        setCurrentArray(arr);
+        setStepIndex(targetIdx);
+        setLog(prev => prev.filter(e => e.id < targetIdx));
+    };
 
     const handleLogEntryClick = (entry) => {
         const targetIdx = entry.id;
@@ -331,30 +381,46 @@ const VisualizationCanvas = ({ array, algorithm }) => {
 
                 {/* Controls */}
                 <div className="controls">
-                    <button 
-                        onClick={handlePlay} 
+                    <button
+                        onClick={handlePlay}
                         disabled={isPlaying || stepIndex >= steps.length}
                         className="control-button"
                     >
                         Play
                     </button>
-                    <button 
-                        onClick={handlePause} 
+                    <button
+                        onClick={handlePause}
                         disabled={!isPlaying}
                         className="control-button"
                     >
                         Pause
                     </button>
-                    <button 
+                    <button
                         onClick={handleReset}
                         className="control-button"
                     >
                         Reset
                     </button>
+                    <button
+                        onClick={handleStepBack}
+                        disabled={isPlaying || stepIndex <= 0}
+                        className="control-button control-button--step"
+                        title="Step back"
+                    >
+                        ← Step
+                    </button>
+                    <button
+                        onClick={handleStepForward}
+                        disabled={isPlaying || stepIndex >= steps.length}
+                        className="control-button control-button--step"
+                        title="Step forward"
+                    >
+                        Step →
+                    </button>
                     <div className="speed-control">
                         <label>Speed:</label>
-                        <select 
-                            value={speed} 
+                        <select
+                            value={speed}
                             onChange={(e) => handleSpeedChange(e.target.value)}
                         >
                             <option value={0.5}>0.5x</option>
@@ -364,7 +430,37 @@ const VisualizationCanvas = ({ array, algorithm }) => {
                         </select>
                     </div>
                 </div>
+
+                {/* Metrics Panel */}
+                {log.length > 0 && (
+                    <div className="metrics-panel">
+                        <div className="metrics-item metrics-item--compare">
+                            <span className="metrics-value">{metrics.compare}</span>
+                            <span className="metrics-label">Comparisons</span>
+                        </div>
+                        <div className="metrics-item metrics-item--swap">
+                            <span className="metrics-value">{metrics.swap}</span>
+                            <span className="metrics-label">Swaps</span>
+                        </div>
+                        <div className="metrics-item metrics-item--write">
+                            <span className="metrics-value">{metrics.write}</span>
+                            <span className="metrics-label">Writes</span>
+                        </div>
+                        <div className="metrics-item metrics-item--fixed">
+                            <span className="metrics-value">{metrics.fixed}</span>
+                            <span className="metrics-label">Sorted</span>
+                        </div>
+                    </div>
+                )}
             </div>
+
+            {/* Pseudocode Panel */}
+            {algorithmInfo?.pseudocode && (
+                <PseudocodePanel
+                    pseudocode={algorithmInfo.pseudocode}
+                    activeLine={steps[stepIndex]?.line ?? null}
+                />
+            )}
 
             {/* Execution Log */}
             <div className="execution-log">
@@ -397,7 +493,7 @@ const VisualizationCanvas = ({ array, algorithm }) => {
                 </div>
             </div>
         </div>
-        <AlgoChat context={chatContext} isRunning={stepIndex > 0} />
+        <AlgoChat context={chatContext} isRunning={stepIndex > 0} onOpenAuth={onOpenAuth} />
         </div>
     );
 };

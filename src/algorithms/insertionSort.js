@@ -12,6 +12,7 @@ export const insertionSort = (array) => {
             action: "compare",
             description: `Taking element ${key} for insertion into sorted portion`,
             iteration,
+            line: 1,
         });
 
         while (j >= 0 && sortedArray[j] > key) {
@@ -20,6 +21,7 @@ export const insertionSort = (array) => {
                 action: "compare",
                 description: `Comparing elements ${sortedArray[j]} and ${key}`,
                 iteration,
+                line: 4,
             });
 
             sortedArray[j + 1] = sortedArray[j];
@@ -28,6 +30,7 @@ export const insertionSort = (array) => {
                 action: "swap",
                 description: `Moving element ${sortedArray[j]} to the right`,
                 iteration,
+                line: 5,
             });
 
             j--;
@@ -40,6 +43,7 @@ export const insertionSort = (array) => {
                 action: "write",
                 description: `Placing element ${key} at position ${j + 1}`,
                 iteration,
+                line: 7,
             });
         }
 
@@ -48,6 +52,7 @@ export const insertionSort = (array) => {
             action: "fixed",
             description: `Array portion up to position ${i} is sorted`,
             iteration,
+            line: 8,
         });
     }
 
@@ -62,5 +67,16 @@ export const insertionSortInfo = {
         worst: "O(n²)"
     },
     spaceComplexity: "O(1)",
-    description: "Insertion Sort is a sorting algorithm that builds the final sorted array one item at a time. It takes one element from the input data in each iteration and finds its correct position in the already sorted portion of the array."
+    description: "Insertion Sort is a sorting algorithm that builds the final sorted array one item at a time. It takes one element from the input data in each iteration and finds its correct position in the already sorted portion of the array.",
+    pseudocode: [
+        "for i = 1 to n−1:",
+        "  key = arr[i]",
+        "  j = i − 1",
+        "  while j ≥ 0 and arr[j] > key:",
+        "    compare arr[j] and key",
+        "    shift arr[j] right",
+        "    j = j − 1",
+        "  place key at arr[j+1]",
+        "  mark arr[0..i] as sorted",
+    ],
 };

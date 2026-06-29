@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useAuth } from "../context/useAuth";
 import "./AlgoChat.css";
 
 const API = "http://localhost:3001/api/chat";
@@ -9,12 +10,14 @@ const ChatMessage = ({ msg }) => (
     </div>
 );
 
-const AlgoChat = ({ context, isRunning }) => {
+const AlgoChat = ({ context, isRunning, onOpenAuth }) => {
+    const { user, getToken } = useAuth();
     const [isOpen,     setIsOpen]     = useState(false);
     const [messages,   setMessages]   = useState([]);
     const [input,      setInput]      = useState("");
     const [streaming,  setStreaming]  = useState(false);
     const [showToast,  setShowToast]  = useState(false);
+    const [quizMode,   setQuizMode]   = useState(false);
     const bottomRef   = useRef(null);
     const inputRef    = useRef(null);
     const abortRef    = useRef(null);
@@ -56,12 +59,16 @@ const AlgoChat = ({ context, isRunning }) => {
         try {
             const res = await fetch(API, {
                 method:  "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${getToken()}`,
+                },
                 signal:  controller.signal,
                 body: JSON.stringify({
                     question,
                     context,
                     history: messages.filter(m => m.content),
+                    quizMode,
                 }),
             });
 
@@ -170,19 +177,33 @@ const AlgoChat = ({ context, isRunning }) => {
                         </svg>
                         Algorithm Tutor
                     </div>
-                    <button className="algochat-header-close" onClick={() => setIsOpen(false)}>
-                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                            <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                        </svg>
-                    </button>
+                    <div className="algochat-header-actions">
+                        {user && (
+                            <button
+                                className={`algochat-quiz-toggle ${quizMode ? "algochat-quiz-toggle--active" : ""}`}
+                                onClick={() => setQuizMode(q => !q)}
+                                title={quizMode ? "Switch to free Q&A" : "Switch to quiz mode"}
+                            >
+                                {quizMode ? "Free Q&A" : "Quiz me"}
+                            </button>
+                        )}
+                        <button className="algochat-header-close" onClick={() => setIsOpen(false)}>
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <div className="algochat-messages">
                     {messages.length === 0 && (
                         <div className="algochat-empty">
-                            <p>Ask anything about what's happening in the current execution.</p>
+                            <p>{quizMode ? "Quiz mode: the AI will ask you what happens next." : "Ask anything about what's happening in the current execution."}</p>
                             <div className="algochat-suggestions">
-                                {["Why did it swap those elements?", "What's the current iteration doing?", "How close is it to sorted?"].map(s => (
+                                {(quizMode
+                                    ? ["It will compare two elements", "It will swap two elements", "It will write a value"]
+                                    : ["Why did it swap those elements?", "What's the current iteration doing?", "How close is it to sorted?"]
+                                ).map(s => (
                                     <button
                                         key={s}
                                         className="algochat-suggestion"
@@ -198,32 +219,45 @@ const AlgoChat = ({ context, isRunning }) => {
                     <div ref={bottomRef} />
                 </div>
 
-                <div className="algochat-input-row">
-                    <textarea
-                        ref={inputRef}
-                        className="algochat-input"
-                        rows={1}
-                        placeholder="Ask about this step…"
-                        value={input}
-                        onChange={e => setInput(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        disabled={streaming}
-                    />
-                    <button
-                        className="algochat-send"
-                        onClick={send}
-                        disabled={!input.trim() || streaming}
-                    >
-                        {streaming ? (
-                            <span className="algochat-spinner" />
-                        ) : (
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"
-                                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                        )}
-                    </button>
-                </div>
+                {user ? (
+                    <div className="algochat-input-row">
+                        <textarea
+                            ref={inputRef}
+                            className="algochat-input"
+                            rows={1}
+                            placeholder={quizMode ? "Type your answer…" : "Ask about this step…"}
+                            value={input}
+                            onChange={e => setInput(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            disabled={streaming}
+                        />
+                        <button
+                            className="algochat-send"
+                            onClick={send}
+                            disabled={!input.trim() || streaming}
+                        >
+                            {streaming ? (
+                                <span className="algochat-spinner" />
+                            ) : (
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                    <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"
+                                          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                            )}
+                        </button>
+                    </div>
+                ) : (
+                    <div className="algochat-locked">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        <p className="algochat-locked-text">Sign in to use the AI Tutor</p>
+                        <button className="algochat-locked-btn" onClick={() => { setIsOpen(false); onOpenAuth?.(); }}>
+                            Sign in
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -191,6 +191,41 @@ const HeroVisualization = () => {
     );
 };
 
+const RaceCard = ({ onOpenRace }) => (
+    <div className="algo-card bst-card" style={{ "--accent": "#f59e0b" }}>
+        <div className="algo-card-top">
+            <div className="algo-card-header">
+                <span className="algo-category">Challenge</span>
+                <svg width="88" height="36" aria-hidden="true" viewBox="0 0 88 36">
+                    <rect x="4"  y="8"  width="10" height="28" rx="2" fill="#3b82f6" opacity="0.8" />
+                    <rect x="18" y="4"  width="10" height="32" rx="2" fill="#3b82f6" opacity="0.6" />
+                    <rect x="32" y="12" width="10" height="24" rx="2" fill="#3b82f6" opacity="0.5" />
+                    <rect x="50" y="6"  width="10" height="30" rx="2" fill="#a855f7" opacity="0.8" />
+                    <rect x="64" y="10" width="10" height="26" rx="2" fill="#a855f7" opacity="0.6" />
+                    <rect x="78" y="3"  width="10" height="33" rx="2" fill="#a855f7" opacity="0.5" />
+                    <line x1="44" y1="0" x2="44" y2="36" stroke="#e5e9f2" strokeWidth="1.5" strokeDasharray="3,2" />
+                </svg>
+            </div>
+            <h3 className="algo-name">Race Mode</h3>
+            <p className="algo-description">
+                Pit two sorting algorithms against each other on the same array. Watch them compete side by side and see which finishes first.
+            </p>
+        </div>
+        <div className="algo-card-bottom">
+            <div className="complexity-row">
+                <div className="complexity-badge"><span className="complexity-badge-label">Mode</span><span className="complexity-badge-value" style={{ color: "#f59e0b" }}>Side by side</span></div>
+                <div className="complexity-badge"><span className="complexity-badge-label">Sync</span><span className="complexity-badge-value" style={{ color: "#3b82f6" }}>Shared steps</span></div>
+            </div>
+            <button className="algo-visualize-btn" onClick={onOpenRace}>
+                Race
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+);
+
 const BSTCard = ({ onOpenTree }) => (
     <div className="algo-card bst-card" style={{ "--accent": "#8b5cf6" }}>
         <div className="algo-card-top">
@@ -259,7 +294,7 @@ const AIBanner = ({ onOpenAuth }) => (
     </section>
 );
 
-const LandingPage = ({ onSelect, onOpenTree, onOpenAuth }) => {
+const LandingPage = ({ onSelect, onOpenTree, onOpenAuth, onOpenRace }) => {
     const { user } = useAuth();
     return (
     <div className="landing">
@@ -307,6 +342,14 @@ const LandingPage = ({ onSelect, onOpenTree, onOpenAuth }) => {
             <h2 className="algo-section-title">Data Structures</h2>
             <div className="algo-grid">
                 <BSTCard onOpenTree={onOpenTree} />
+            </div>
+        </section>
+
+        {/* ── Race Mode ─────────────────────────────────────────── */}
+        <section className="algo-section">
+            <h2 className="algo-section-title">Challenges</h2>
+            <div className="algo-grid">
+                <RaceCard onOpenRace={onOpenRace} />
             </div>
         </section>
 

@@ -33,6 +33,7 @@ export const mergeSort = (array) => {
             leftRange: [start, mid],
             rightRange: [mid, end],
             iteration,
+            line: 6,
         });
 
         const merged = [];
@@ -48,6 +49,7 @@ export const mergeSort = (array) => {
                 leftRange: [start, mid],
                 rightRange: [mid, end],
                 iteration,
+                line: 7,
             });
             if (left[i] <= right[j]) merged.push(left[i++]);
             else merged.push(right[j++]);
@@ -66,6 +68,7 @@ export const mergeSort = (array) => {
                 leftRange: [start, mid],
                 rightRange: [mid, end],
                 iteration,
+                line: 8,
             });
         }
 
@@ -81,6 +84,7 @@ export const mergeSort = (array) => {
             leftRange: null,
             rightRange: null,
             iteration,
+            line: 9,
         });
 
         return merged;
@@ -102,6 +106,7 @@ export const mergeSort = (array) => {
             leftRange: [start, mid],
             rightRange: [mid, end],
             iteration: iterNum,
+            line: 3,
         });
 
         const left = sort(start, mid);
@@ -123,5 +128,17 @@ export const mergeSortInfo = {
         worst: "O(n log n)"
     },
     spaceComplexity: "O(n)",
-    description: "Divide-and-conquer algorithm that recursively splits the array in half, sorts each half, then merges the sorted halves back together."
+    description: "Divide-and-conquer algorithm that recursively splits the array in half, sorts each half, then merges the sorted halves back together.",
+    pseudocode: [
+        "mergeSort(arr, start, end):",
+        "  if end − start ≤ 1: return",
+        "  mid = (start + end) / 2",
+        "  split into [start..mid] and [mid..end]",
+        "  mergeSort(left half)",
+        "  mergeSort(right half)",
+        "  merge(left, right):",
+        "    compare left[i] and right[j]",
+        "    write smaller value to arr",
+        "  merged segment is sorted",
+    ],
 };

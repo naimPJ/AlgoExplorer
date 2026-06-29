@@ -216,6 +216,57 @@
     outline: none;
 }
 
+/* Step controls */
+.control-button--step {
+    min-width: 72px;
+    font-size: 12.5px;
+    background: #f8fafc;
+}
+
+/* Metrics panel */
+.metrics-panel {
+    display: flex;
+    gap: 10px;
+    padding: 12px 18px;
+    background: #ffffff;
+    border: 1px solid #e5e9f2;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.metrics-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 4px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #f0f2f7;
+}
+
+.metrics-value {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: Inter, sans-serif;
+    line-height: 1;
+}
+
+.metrics-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #9ca3af;
+    font-family: Inter, sans-serif;
+}
+
+.metrics-item--compare .metrics-value { color: #d97706; }
+.metrics-item--swap    .metrics-value { color: #dc2626; }
+.metrics-item--write   .metrics-value { color: #ea580c; }
+.metrics-item--fixed   .metrics-value { color: #059669; }
+
 /* Step description */
 .algorithm-step {
     grid-column: 2;
@@ -354,7 +405,7 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    max-height: 280px;
+    height: 280px;
 }
 
 .execution-log-header {
@@ -399,12 +450,32 @@
 }
 
 .execution-log-entries {
-    overflow-y: auto;
+    overflow-y: scroll;
     flex: 1;
+    min-height: 0;
     padding: 8px;
     display: flex;
     flex-direction: column;
     gap: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
+}
+
+.execution-log-entries::-webkit-scrollbar {
+    width: 6px;
+}
+
+.execution-log-entries::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.execution-log-entries::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+}
+
+.execution-log-entries::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
 }
 
 .execution-log-empty {

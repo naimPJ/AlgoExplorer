@@ -10,6 +10,7 @@ export const bubbleSort = (array) => {
                 action: "compare",
                 description: `Comparing elements ${sortedArray[j]} and ${sortedArray[j + 1]}`,
                 iteration,
+                line: 2,
             });
 
             if (sortedArray[j] > sortedArray[j + 1]) {
@@ -19,6 +20,7 @@ export const bubbleSort = (array) => {
                     action: "swap",
                     description: `Swapping elements ${sortedArray[j]} and ${sortedArray[j + 1]}`,
                     iteration,
+                    line: 4,
                 });
             }
         }
@@ -27,6 +29,7 @@ export const bubbleSort = (array) => {
             action: "fixed",
             description: `Element ${sortedArray[sortedArray.length - i - 1]} is in its final position`,
             iteration,
+            line: 5,
         });
     }
 
@@ -41,5 +44,13 @@ export const bubbleSortInfo = {
         worst: "O(n²)"
     },
     spaceComplexity: "O(1)",
-    description: "Bubble Sort is a simple sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order."
+    description: "Bubble Sort is a simple sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.",
+    pseudocode: [
+        "for i = 0 to n−1:",
+        "  for j = 0 to n−i−2:",
+        "    compare arr[j] and arr[j+1]",
+        "    if arr[j] > arr[j+1]:",
+        "      swap arr[j] and arr[j+1]",
+        "  mark arr[n−i−1] as sorted",
+    ],
 };

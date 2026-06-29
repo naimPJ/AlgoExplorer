@@ -4,6 +4,7 @@ import LandingPage from "./pages/LandingPage";
 import VisualizationCanvas from "./components/VisualizationCanvas";
 import TreePage from "./pages/TreePage";
 import AuthPage from "./pages/AuthPage";
+import RacePage from "./pages/RacePage";
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./context/useAuth";
 import "./App.css";
@@ -34,11 +35,14 @@ const AppInner = () => {
     };
 
     const handleOpenTree = () => setView("tree");
+    const handleOpenRace = () => setView("race");
 
     const handleBack = () => {
         setView("landing");
         setArray([]);
     };
+
+    const inSub = ["visualization", "tree", "race"].includes(view);
 
     const handleOpenAuth = () => setView("auth");
     const handleAuthSuccess = () => setView("landing");
@@ -54,21 +58,25 @@ const AppInner = () => {
         setArray(generated);
     };
 
-    const algorithmName = selectedAlgorithm
-        .replace(/([A-Z])/g, " $1")
-        .replace(/^./, s => s.toUpperCase())
-        .trim();
+    const algorithmName = view === "race"
+        ? "Race Mode"
+        : selectedAlgorithm
+            .replace(/([A-Z])/g, " $1")
+            .replace(/^./, s => s.toUpperCase())
+            .trim();
 
     return (
         <div className="App">
-            <Navbar view={view} algorithmName={algorithmName} onHome={handleBack} onOpenAuth={handleOpenAuth} />
+            <Navbar view={view} algorithmName={algorithmName} onHome={handleBack} onOpenAuth={handleOpenAuth} inSub={inSub} />
             <main>
                 {view === "auth" ? (
                     <AuthPage onSuccess={handleAuthSuccess} onBack={handleBack} />
                 ) : view === "landing" ? (
-                    <LandingPage onSelect={handleSelectAlgorithm} onOpenTree={handleOpenTree} onOpenAuth={handleOpenAuth} />
+                    <LandingPage onSelect={handleSelectAlgorithm} onOpenTree={handleOpenTree} onOpenAuth={handleOpenAuth} onOpenRace={handleOpenRace} />
                 ) : view === "tree" ? (
                     <TreePage />
+                ) : view === "race" ? (
+                    <RacePage onBack={handleBack} />
                 ) : (
                     <div className="viz-view">
                         <div className="array-input-bar">
@@ -100,6 +108,7 @@ const AppInner = () => {
                         <VisualizationCanvas
                             array={array}
                             algorithm={selectedAlgorithm}
+                            onOpenAuth={handleOpenAuth}
                         />
                     </div>
                 )}

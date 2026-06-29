@@ -14,6 +14,7 @@ export const radixSort = (array) => {
             action: "info",
             description: `Sorting by ${digitLabel}`,
             iteration,
+            line: 0,
         });
 
         const buckets = Array.from({ length: 10 }, () => []);
@@ -27,6 +28,7 @@ export const radixSort = (array) => {
                 action: "compare",
                 description: `Number ${sortedArray[i]} goes to bucket ${digit} (${digitLabel} digit)`,
                 iteration,
+                line: 3,
             });
         }
 
@@ -38,6 +40,7 @@ export const radixSort = (array) => {
                     action: "write",
                     description: `Returning number ${num} from bucket ${digit} to position ${currentIndex}`,
                     iteration,
+                    line: 5,
                 });
 
                 sortedArray[currentIndex] = num;
@@ -50,6 +53,7 @@ export const radixSort = (array) => {
             action: "fixed",
             description: `Array is sorted by ${digitLabel}`,
             iteration,
+            line: 6,
         });
     }
 
@@ -64,5 +68,14 @@ export const radixSortInfo = {
         worst: "O(nk)"
     },
     spaceComplexity: "O(n + k)",
-    description: "Radix Sort is a non-comparative sorting algorithm that sorts numbers digit by digit, starting from the least significant digit. It uses buckets (0-9) to sort numbers based on the current digit."
+    description: "Radix Sort is a non-comparative sorting algorithm that sorts numbers digit by digit, starting from the least significant digit. It uses buckets (0-9) to sort numbers based on the current digit.",
+    pseudocode: [
+        "for exp = 1; max/exp > 0; exp *= 10:",
+        "  buckets = [0..9 empty lists]",
+        "  for each number in arr:",
+        "    digit = (number / exp) % 10",
+        "    place number into bucket[digit]",
+        "  rebuild arr from buckets in order",
+        "  mark pass as complete",
+    ],
 };

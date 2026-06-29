@@ -29,6 +29,7 @@ export const bottomUpMergeSort = (array) => {
             leftRange: null,
             rightRange: null,
             iteration,
+            line: 0,
         });
 
         for (let leftStart = 0; leftStart < n; leftStart += 2 * size) {
@@ -48,6 +49,7 @@ export const bottomUpMergeSort = (array) => {
                 leftRange: [leftStart, mid],
                 rightRange: [mid, rightEnd],
                 iteration,
+                line: 4,
             });
 
             let i = 0, j = 0, k = leftStart;
@@ -62,6 +64,7 @@ export const bottomUpMergeSort = (array) => {
                     leftRange: [leftStart, mid],
                     rightRange: [mid, rightEnd],
                     iteration,
+                    line: 5,
                 });
 
                 if (left[i] <= right[j]) {
@@ -79,6 +82,7 @@ export const bottomUpMergeSort = (array) => {
                     leftRange: [leftStart, mid],
                     rightRange: [mid, rightEnd],
                     iteration,
+                    line: 6,
                 });
             }
 
@@ -93,6 +97,7 @@ export const bottomUpMergeSort = (array) => {
                     leftRange: [leftStart, mid],
                     rightRange: [mid, rightEnd],
                     iteration,
+                    line: 6,
                 });
             }
 
@@ -107,6 +112,7 @@ export const bottomUpMergeSort = (array) => {
                     leftRange: [leftStart, mid],
                     rightRange: [mid, rightEnd],
                     iteration,
+                    line: 6,
                 });
             }
 
@@ -122,6 +128,7 @@ export const bottomUpMergeSort = (array) => {
                 leftRange: null,
                 rightRange: null,
                 iteration,
+                line: 7,
             });
         }
     }
@@ -137,5 +144,15 @@ export const bottomUpMergeSortInfo = {
         worst: "O(n log n)"
     },
     spaceComplexity: "O(n)",
-    description: "Iterative merge sort that builds sorted sub-arrays from the bottom up — starts merging individual elements into pairs, pairs into quads, and so on, without recursion."
+    description: "Iterative merge sort that builds sorted sub-arrays from the bottom up — starts merging individual elements into pairs, pairs into quads, and so on, without recursion.",
+    pseudocode: [
+        "for size = 1; size < n; size *= 2:",
+        "  for leftStart = 0; leftStart < n; leftStart += 2*size:",
+        "    mid = leftStart + size",
+        "    rightEnd = leftStart + 2*size",
+        "    merge(arr[leftStart..mid], arr[mid..rightEnd]):",
+        "      compare left[i] and right[j]",
+        "      write smaller value to arr",
+        "    merged segment is sorted",
+    ],
 };

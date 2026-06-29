@@ -13,6 +13,7 @@ export const quickSort = (array) => {
             action: "pivot",
             description: `Selected pivot element: ${pivot}`,
             iteration,
+            line: 1,
         });
 
         let i = low - 1;
@@ -23,6 +24,7 @@ export const quickSort = (array) => {
                 action: "compare",
                 description: `Comparing element ${sortedArray[j]} with pivot ${pivot}`,
                 iteration,
+                line: 4,
             });
 
             if (sortedArray[j] <= pivot) {
@@ -34,6 +36,7 @@ export const quickSort = (array) => {
                         action: "swap",
                         description: `Swapping elements ${sortedArray[i]} and ${sortedArray[j]}`,
                         iteration,
+                        line: 6,
                     });
                 }
             }
@@ -46,6 +49,7 @@ export const quickSort = (array) => {
                 action: "swap",
                 description: `Placing pivot in its final position`,
                 iteration,
+                line: 7,
             });
         }
 
@@ -54,6 +58,7 @@ export const quickSort = (array) => {
             action: "fixed",
             description: `Element ${sortedArray[i + 1]} is in its final position`,
             iteration,
+            line: 8,
         });
 
         return i + 1;
@@ -80,5 +85,17 @@ export const quickSortInfo = {
         worst: "O(n²)"
     },
     spaceComplexity: "O(log n)",
-    description: "Quick Sort is an efficient, in-place sorting algorithm that uses a divide-and-conquer strategy. It works by selecting a 'pivot' element and partitioning the array around it."
+    description: "Quick Sort is an efficient, in-place sorting algorithm that uses a divide-and-conquer strategy. It works by selecting a 'pivot' element and partitioning the array around it.",
+    pseudocode: [
+        "quickSort(arr, low, high):",
+        "  pivot = arr[high]",
+        "  i = low − 1",
+        "  for j = low to high−1:",
+        "    compare arr[j] and pivot",
+        "    if arr[j] ≤ pivot:",
+        "      i++; swap arr[i] and arr[j]",
+        "  swap arr[i+1] and arr[high]",
+        "  mark pivot position as sorted",
+        "  recurse on left and right partitions",
+    ],
 };

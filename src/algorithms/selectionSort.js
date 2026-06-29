@@ -11,6 +11,7 @@ export const selectionSort = (array) => {
             action: "compare",
             description: `Looking for the smallest element starting from position ${i}`,
             iteration,
+            line: 1,
         });
 
         for (let j = i + 1; j < sortedArray.length; j++) {
@@ -19,6 +20,7 @@ export const selectionSort = (array) => {
                 action: "compare",
                 description: `Comparing elements ${sortedArray[minIndex]} and ${sortedArray[j]}`,
                 iteration,
+                line: 3,
             });
 
             if (sortedArray[j] < sortedArray[minIndex]) {
@@ -32,6 +34,7 @@ export const selectionSort = (array) => {
                 action: "swap",
                 description: `Swapping elements ${sortedArray[i]} and ${sortedArray[minIndex]}`,
                 iteration,
+                line: 5,
             });
             [sortedArray[i], sortedArray[minIndex]] = [sortedArray[minIndex], sortedArray[i]];
         }
@@ -41,6 +44,7 @@ export const selectionSort = (array) => {
             action: "fixed",
             description: `Element ${sortedArray[i]} is in its final position`,
             iteration,
+            line: 6,
         });
     }
 
@@ -55,5 +59,14 @@ export const selectionSortInfo = {
         worst: "O(n²)"
     },
     spaceComplexity: "O(1)",
-    description: "Selection Sort is a simple sorting algorithm that repeatedly finds the minimum element from the unsorted portion and places it at the beginning of the sorted portion."
+    description: "Selection Sort is a simple sorting algorithm that repeatedly finds the minimum element from the unsorted portion and places it at the beginning of the sorted portion.",
+    pseudocode: [
+        "for i = 0 to n−2:",
+        "  minIndex = i",
+        "  for j = i+1 to n−1:",
+        "    compare arr[minIndex] and arr[j]",
+        "    if arr[j] < arr[minIndex]: minIndex = j",
+        "  swap arr[i] and arr[minIndex]",
+        "  mark arr[i] as sorted",
+    ],
 };
