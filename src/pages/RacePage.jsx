@@ -9,11 +9,12 @@ import { shellSort }         from "../algorithms/shellSort";
 import { radixSort }         from "../algorithms/radixSort";
 import { countingSort }      from "../algorithms/countingSort";
 import { bottomUpMergeSort } from "../algorithms/bottomUpMergeSort";
+import { timsort }           from "../algorithms/timsort";
 import "./RacePage.css";
 
 const ALGO_FUNCS = {
     bubbleSort, quickSort, mergeSort, selectionSort,
-    insertionSort, shellSort, radixSort, countingSort, bottomUpMergeSort,
+    insertionSort, shellSort, radixSort, countingSort, bottomUpMergeSort, timsort,
 };
 
 const ALGORITHM_OPTIONS = [
@@ -26,6 +27,7 @@ const ALGORITHM_OPTIONS = [
     { value: "quickSort",         label: "Quick Sort"           },
     { value: "radixSort",         label: "Radix Sort"           },
     { value: "countingSort",      label: "Counting Sort"        },
+    { value: "timsort",           label: "Timsort"              },
 ];
 
 const ACCENT_A = "#3b82f6";

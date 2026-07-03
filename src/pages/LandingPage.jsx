@@ -8,6 +8,7 @@ import { bottomUpMergeSortInfo } from "../algorithms/bottomUpMergeSort";
 import { quickSortInfo }        from "../algorithms/quickSort";
 import { radixSortInfo }        from "../algorithms/radixSort";
 import { countingSortInfo }     from "../algorithms/countingSort";
+import { timsortInfo }          from "../algorithms/timsort";
 import "./LandingPage.css";
 import { useAuth } from "../context/useAuth";
 
@@ -21,6 +22,7 @@ const META = {
     quickSort:         { accent: "#a855f7", category: "Divide & Conquer",preview: [9,1,8,2,7,3,6,4] },
     radixSort:         { accent: "#10b981", category: "Non-comparison",  preview: [6,3,9,1,8,2,7,4] },
     countingSort:      { accent: "#14b8a6", category: "Non-comparison",  preview: [3,6,1,8,2,7,4,9] },
+    timsort:           { accent: "#ec4899", category: "Divide & Conquer",preview: [5,2,9,1,7,3,8,4] },
 };
 
 const ALGORITHMS = [
@@ -33,6 +35,7 @@ const ALGORITHMS = [
     { id: "quickSort",         info: quickSortInfo         },
     { id: "radixSort",         info: radixSortInfo         },
     { id: "countingSort",      info: countingSortInfo      },
+    { id: "timsort",           info: timsortInfo           },
 ].map(({ id, info }) => ({ id, ...info, ...META[id] }));
 
 const complexityColor = (c) => {
