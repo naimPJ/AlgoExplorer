@@ -19,6 +19,7 @@ import { shellSort, shellSortInfo } from "../algorithms/shellSort";
 import { radixSort, radixSortInfo } from "../algorithms/radixSort";
 import { countingSort, countingSortInfo } from "../algorithms/countingSort";
 import { bottomUpMergeSort, bottomUpMergeSortInfo } from "../algorithms/bottomUpMergeSort";
+import { timsort, timsortInfo } from "../algorithms/timsort";
 
 // Konstante
 const ANIMATION_SPEED = 700;
@@ -45,7 +46,8 @@ const ALGORITHM_MAP = {
     shellSort: { func: shellSort, info: shellSortInfo },
     radixSort: { func: radixSort, info: radixSortInfo },
     countingSort: { func: countingSort, info: countingSortInfo },
-    bottomUpMergeSort: { func: bottomUpMergeSort, info: bottomUpMergeSortInfo }
+    bottomUpMergeSort: { func: bottomUpMergeSort, info: bottomUpMergeSortInfo },
+    timsort: { func: timsort, info: timsortInfo }
 };
 
 const VisualizationCanvas = ({ array, algorithm, onOpenAuth }) => {

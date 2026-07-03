@@ -9,6 +9,7 @@ import { shellSort, shellSortInfo } from "../algorithms/shellSort";
 import { radixSort, radixSortInfo } from "../algorithms/radixSort";
 import { countingSort, countingSortInfo } from "../algorithms/countingSort";
 import { bottomUpMergeSort, bottomUpMergeSortInfo } from "../algorithms/bottomUpMergeSort";
+import { timsort, timsortInfo } from "../algorithms/timsort";
 
 const ALGORITHM_MAP = {
     bubbleSort:        { func: bubbleSort,        info: bubbleSortInfo        },
@@ -20,6 +21,7 @@ const ALGORITHM_MAP = {
     radixSort:         { func: radixSort,         info: radixSortInfo         },
     countingSort:      { func: countingSort,      info: countingSortInfo      },
     bottomUpMergeSort: { func: bottomUpMergeSort, info: bottomUpMergeSortInfo },
+    timsort:           { func: timsort,           info: timsortInfo           },
 };
 
 const BAR_COLORS = {
