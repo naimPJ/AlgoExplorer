@@ -10,7 +10,7 @@ const ChatMessage = ({ msg }) => (
     </div>
 );
 
-const AlgoChat = ({ context, onOpenAuth }) => {
+const AlgoChat = ({ context, onOpenAuth, floating = false }) => {
     const { user, getToken } = useAuth();
     const [collapsed,  setCollapsed]  = useState(() => localStorage.getItem("ae_tutor_collapsed") === "1");
     const [messages,   setMessages]   = useState([]);
@@ -124,6 +124,132 @@ const AlgoChat = ({ context, onOpenAuth }) => {
         }
     };
 
+    const panel = (
+        <div className="algochat-panel">
+            <div className="algochat-header">
+                <div className="algochat-header-title">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
+                              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Algorithm Tutor
+                </div>
+                <div className="algochat-header-actions">
+                    {user && (
+                        <button
+                            className={`algochat-quiz-toggle ${quizMode ? "algochat-quiz-toggle--active" : ""}`}
+                            onClick={() => setQuizMode(q => !q)}
+                            title={quizMode ? "Switch to free Q&A" : "Switch to quiz mode"}
+                        >
+                            {quizMode ? "Free Q&A" : "Quiz me"}
+                        </button>
+                    )}
+                    <button
+                        className="algochat-header-close"
+                        onClick={() => setCollapsed(true)}
+                        title="Collapse tutor"
+                    >
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div className="algochat-messages">
+                {messages.length === 0 && (
+                    <div className="algochat-empty">
+                        <p>{quizMode ? "Quiz mode: the AI will ask you what happens next." : "Ask anything about what's happening in the current execution."}</p>
+                        <div className="algochat-suggestions">
+                            {(context?.kind === 'tree'
+                                ? (quizMode
+                                    ? ["It will go left", "It will go right", "It found the value"]
+                                    : ["Why did it go left here?", "What does this comparison tell us?", "Is the tree balanced?"])
+                                : (quizMode
+                                    ? ["It will compare two elements", "It will swap two elements", "It will write a value"]
+                                    : ["Why did it swap those elements?", "What's the current iteration doing?", "How close is it to sorted?"])
+                            ).map(s => (
+                                <button
+                                    key={s}
+                                    className="algochat-suggestion"
+                                    onClick={() => { setInput(s); inputRef.current?.focus(); }}
+                                >
+                                    {s}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+                {messages.map((msg, i) => <ChatMessage key={i} msg={msg} />)}
+                <div ref={bottomRef} />
+            </div>
+
+            {user ? (
+                <div className="algochat-input-row">
+                    <textarea
+                        ref={inputRef}
+                        className="algochat-input"
+                        rows={1}
+                        placeholder={quizMode ? "Type your answer…" : "Ask about this step…"}
+                        value={input}
+                        onChange={e => setInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        disabled={streaming}
+                    />
+                    <button
+                        className="algochat-send"
+                        onClick={send}
+                        disabled={!input.trim() || streaming}
+                    >
+                        {streaming ? (
+                            <span className="algochat-spinner" />
+                        ) : (
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"
+                                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                        )}
+                    </button>
+                </div>
+            ) : (
+                <div className="algochat-locked">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    <p className="algochat-locked-text">Sign in to use the AI Tutor</p>
+                    <button className="algochat-locked-btn" onClick={() => onOpenAuth?.()}>
+                        Sign in
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+
+    if (floating) {
+        return (
+            <div className="algochat-floating">
+                {!collapsed && panel}
+                <button
+                    className="algochat-fab"
+                    onClick={() => setCollapsed(c => !c)}
+                    title={collapsed ? "Open Algorithm Tutor" : "Close Algorithm Tutor"}
+                >
+                    {collapsed ? (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
+                                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                    ) : (
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                    )}
+                </button>
+            </div>
+        );
+    }
+
     return (
         <div className={`algochat-dock ${collapsed ? "algochat-dock--collapsed" : ""}`}>
             {/* Collapsed rail */}
@@ -142,102 +268,7 @@ const AlgoChat = ({ context, onOpenAuth }) => {
                 </svg>
             </button>
 
-            {/* Panel */}
-            <div className="algochat-panel">
-                <div className="algochat-header">
-                    <div className="algochat-header-title">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
-                                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                        Algorithm Tutor
-                    </div>
-                    <div className="algochat-header-actions">
-                        {user && (
-                            <button
-                                className={`algochat-quiz-toggle ${quizMode ? "algochat-quiz-toggle--active" : ""}`}
-                                onClick={() => setQuizMode(q => !q)}
-                                title={quizMode ? "Switch to free Q&A" : "Switch to quiz mode"}
-                            >
-                                {quizMode ? "Free Q&A" : "Quiz me"}
-                            </button>
-                        )}
-                        <button
-                            className="algochat-header-close"
-                            onClick={() => setCollapsed(true)}
-                            title="Collapse tutor"
-                        >
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div className="algochat-messages">
-                    {messages.length === 0 && (
-                        <div className="algochat-empty">
-                            <p>{quizMode ? "Quiz mode: the AI will ask you what happens next." : "Ask anything about what's happening in the current execution."}</p>
-                            <div className="algochat-suggestions">
-                                {(quizMode
-                                    ? ["It will compare two elements", "It will swap two elements", "It will write a value"]
-                                    : ["Why did it swap those elements?", "What's the current iteration doing?", "How close is it to sorted?"]
-                                ).map(s => (
-                                    <button
-                                        key={s}
-                                        className="algochat-suggestion"
-                                        onClick={() => { setInput(s); inputRef.current?.focus(); }}
-                                    >
-                                        {s}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                    {messages.map((msg, i) => <ChatMessage key={i} msg={msg} />)}
-                    <div ref={bottomRef} />
-                </div>
-
-                {user ? (
-                    <div className="algochat-input-row">
-                        <textarea
-                            ref={inputRef}
-                            className="algochat-input"
-                            rows={1}
-                            placeholder={quizMode ? "Type your answer…" : "Ask about this step…"}
-                            value={input}
-                            onChange={e => setInput(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            disabled={streaming}
-                        />
-                        <button
-                            className="algochat-send"
-                            onClick={send}
-                            disabled={!input.trim() || streaming}
-                        >
-                            {streaming ? (
-                                <span className="algochat-spinner" />
-                            ) : (
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                    <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"
-                                          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                </svg>
-                            )}
-                        </button>
-                    </div>
-                ) : (
-                    <div className="algochat-locked">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                        </svg>
-                        <p className="algochat-locked-text">Sign in to use the AI Tutor</p>
-                        <button className="algochat-locked-btn" onClick={() => onOpenAuth?.()}>
-                            Sign in
-                        </button>
-                    </div>
-                )}
-            </div>
+            {panel}
         </div>
     );
 };

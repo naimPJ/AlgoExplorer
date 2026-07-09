@@ -74,7 +74,7 @@ const AppInner = () => {
                 ) : view === "landing" ? (
                     <LandingPage onSelect={handleSelectAlgorithm} onOpenTree={handleOpenTree} onOpenAuth={handleOpenAuth} onOpenRace={handleOpenRace} />
                 ) : view === "tree" ? (
-                    <TreePage />
+                    <TreePage onOpenAuth={handleOpenAuth} />
                 ) : view === "race" ? (
                     <RacePage onBack={handleBack} />
                 ) : (

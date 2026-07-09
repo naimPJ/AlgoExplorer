@@ -6,13 +6,20 @@ const router = express.Router();
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 function buildSystemPrompt(context, quizMode) {
-    const { algorithm, timeComplexity, stepIndex, totalSteps, currentStep, nextStep, executionLog, array } = context;
+    const {
+        kind, algorithm, timeComplexity, stepIndex, totalSteps,
+        currentStep, nextStep, executionLog, array, treeSnapshot,
+    } = context;
+    const isTree = kind === 'tree';
 
     const lines = [
         "You are an algorithm tutor embedded in AlgoExplorer, an interactive algorithm visualizer.",
         "Your job is to help students understand what is happening during a live algorithm execution.",
         "Keep answers short (2–4 sentences), concrete, and tied to the current execution state.",
         "Never just recite theory — always connect your answer to the specific step the user is on.",
+        isTree
+            ? "This is a binary search tree: reason in terms of nodes, left/right children, and the BST invariant (left < node < right) — never array positions or indices."
+            : "This is an array-based algorithm: reason in terms of array positions, comparisons, and swaps.",
         "",
         `Algorithm: ${algorithm}`,
     ];
@@ -30,6 +37,12 @@ function buildSystemPrompt(context, quizMode) {
         if (currentStep.iteration != null) {
             lines.push(`Iteration: ${currentStep.iteration}`);
         }
+        if (isTree && currentStep.path?.length) {
+            lines.push(`Path so far: ${currentStep.path.join(" → ")}`);
+        }
+        if (isTree && currentStep.currentValue != null) {
+            lines.push(`Comparing against node: ${currentStep.currentValue}`);
+        }
     }
 
     if (executionLog?.length) {
@@ -43,7 +56,13 @@ function buildSystemPrompt(context, quizMode) {
         }
     }
 
-    if (array?.length) {
+    if (isTree) {
+        if (treeSnapshot?.inorder?.length) {
+            lines.push(`Current tree — root: ${treeSnapshot.root}, inorder values: [${treeSnapshot.inorder.join(", ")}]`);
+        } else {
+            lines.push("The tree is currently empty. Do not invent or assume any nodes.");
+        }
+    } else if (array?.length) {
         lines.push(`Current array: [${array.join(", ")}]`);
     } else {
         lines.push("No array has been entered yet. Do not invent or assume any elements.");

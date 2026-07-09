@@ -332,6 +332,67 @@
 
 .algochat-locked-btn:hover { background: #2f4ac7; }
 
+/* ── Floating (overlay) variant ───────────────────────────────────────────── */
+.algochat-floating {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 14px;
+    pointer-events: none;
+}
+
+.algochat-floating .algochat-panel,
+.algochat-floating .algochat-fab {
+    pointer-events: auto;
+}
+
+.algochat-floating .algochat-panel {
+    width: 380px;
+    height: min(600px, calc(100vh - 140px));
+    animation: algochat-pop-in 0.16s ease;
+    transform-origin: bottom right;
+}
+
+@keyframes algochat-pop-in {
+    from { opacity: 0; transform: translateY(10px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.algochat-fab {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #3b5bdb;
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 28px rgba(59, 91, 219, 0.38);
+    transition: background 0.15s, transform 0.15s;
+}
+
+.algochat-fab:hover {
+    background: #2f4ac7;
+    transform: scale(1.06);
+}
+
+@media (max-width: 480px) {
+    .algochat-floating {
+        right: 12px;
+        bottom: 12px;
+    }
+    .algochat-floating .algochat-panel {
+        width: calc(100vw - 24px);
+    }
+}
+
 /* ── Streaming spinner ────────────────────────────────────────────────────── */
 .algochat-spinner {
     width: 14px;

@@ -39,7 +39,7 @@ const LogEntry = ({ entry, onEntryClick }) => {
 };
 
 // ── Tree Page ─────────────────────────────────────────────────────────────────
-const TreePage = () => {
+const TreePage = ({ onOpenAuth }) => {
     const [tree,        setTree]        = useState(null);
     const [steps,       setSteps]       = useState([]);
     const [stepIdx,     setStepIdx]     = useState(0);
@@ -217,15 +217,41 @@ const TreePage = () => {
     };
 
     const currentStep = steps[stepIdx] ?? null;
+    const nextStep = steps[stepIdx + 1] ?? null;
     const noTree = !tree && !currentStep?.treeAfter;
 
-    const chatContext = useMemo(() => ({
-        algorithm:   'Binary Search Tree',
-        stepIndex:   stepIdx,
-        totalSteps:  steps.length,
-        currentStep: currentStep ? { action: currentStep.action, description: currentStep.description } : null,
-        recentSteps: log.slice(0, 8).map(e => e.description),
-    }), [stepIdx, steps.length, currentStep, log]);
+    const chatContext = useMemo(() => {
+        const inorderValues = [];
+        const walk = (node) => {
+            if (!node) return;
+            walk(node.left);
+            inorderValues.push(node.value);
+            walk(node.right);
+        };
+        walk(tree);
+
+        return {
+            kind:        'tree',
+            algorithm:   'Binary Search Tree',
+            stepIndex:   stepIdx,
+            totalSteps:  steps.length,
+            currentStep: currentStep ? {
+                action:       currentStep.action,
+                description:  currentStep.description,
+                path:         currentStep.path,
+                currentValue: currentStep.currentValue,
+            } : null,
+            nextStep: nextStep ? {
+                action:      nextStep.action,
+                description: nextStep.description,
+            } : null,
+            executionLog: log.slice(0, 8).map(e => ({ action: e.action, description: e.description })),
+            treeSnapshot: {
+                root:    tree?.value ?? null,
+                inorder: inorderValues,
+            },
+        };
+    }, [stepIdx, steps.length, currentStep, nextStep, log, tree]);
 
     return (
         <div className="tree-page-wrap">
@@ -355,7 +381,7 @@ const TreePage = () => {
             </div>
 
         </div>
-        <AlgoChat context={chatContext} isRunning={stepIdx > 0} />
+        <AlgoChat context={chatContext} onOpenAuth={onOpenAuth} floating />
         </div>
     );
 };
