@@ -13,9 +13,11 @@ const makeToken = (user) =>
 router.get("/", passport.authenticate("google", { scope: ["profile", "email"], session: false }));
 
 // GET /api/auth/google/callback  — Google redirects here
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
+
 router.get(
     "/callback",
-    passport.authenticate("google", { session: false, failureRedirect: "http://localhost:5173/auth?error=sso_failed" }),
+    passport.authenticate("google", { session: false, failureRedirect: `${CLIENT_URL}/auth?error=sso_failed` }),
     (req, res) => {
         const token = makeToken(req.user);
         const user  = {
@@ -26,7 +28,7 @@ router.get(
         };
         // Pass token + user to the frontend via query params, frontend stores them
         const params = new URLSearchParams({ token, user: JSON.stringify(user) });
-        res.redirect(`http://localhost:5173/auth/callback?${params}`);
+        res.redirect(`${CLIENT_URL}/auth/callback?${params}`);
     }
 );
 
