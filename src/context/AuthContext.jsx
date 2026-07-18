@@ -1,8 +1,9 @@
 import React, { createContext, useState } from "react";
+import { API_BASE_URL } from "../config";
 
 export const AuthContext = createContext(null);
 
-const API = "http://localhost:3001/api/auth";
+const API = `${API_BASE_URL}/api/auth`;
 
 const getToken  = () => localStorage.getItem("ae_token");
 const saveToken = (t) => localStorage.setItem("ae_token", t);

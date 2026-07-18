@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/useAuth";
+import { API_BASE_URL } from "../config";
 import "./AlgoChat.css";
 
-const API = "http://localhost:3001/api/chat";
+const API = `${API_BASE_URL}/api/chat`;
 
 const ChatMessage = ({ msg }) => (
     <div className={`algochat-msg algochat-msg--${msg.role}`}>
